@@ -1,0 +1,16 @@
+
+User
+  ID integer PK
+  UserName String
+  email String
+  password String
+
+Tweets
+  ID integer PK
+  User-ID integer FK
+  Content String
+  dateTime String
+
+UserFollowing
+  Followed Integer FK User
+  Follower Integer FK User  
