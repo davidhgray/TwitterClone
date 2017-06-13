@@ -28,6 +28,7 @@ public class Twitter {
 		ArrayList<Tweets> TweetList = new ArrayList<Tweets>();
 		
 		connect();
+		createTables();
 		
 		// root directory
 		get("/", (req, res) -> {
@@ -82,4 +83,46 @@ public class Twitter {
 		}
 
 	}
+	
+	public static void createTables() {
+        // SQLite connection string
+        String url = "jdbc:sqlite:fritter.db";
+        
+        // SQL statement for creating a new table
+        
+        String usersSQL = "CREATE TABLE IF NOT EXISTS users (\n"
+                + "	id integer PRIMARY KEY,\n"
+                + "	username text NOT NULL,\n"
+                + "	email text \n"
+                + "	password text \n"
+                + ");";
+        
+        try (Connection conn = DriverManager.getConnection(url);
+                Statement stmt = conn.createStatement()) {
+            // create a new table
+            stmt.execute(usersSQL);
+            
+                     
+            String tweetsSQL = "CREATE TABLE IF NOT EXISTS tweets (\n"
+                    + "	id integer PRIMARY KEY,\n"
+                    + " content text,\n"
+                    + "	dateTime text, \n"
+                    + "	user_id integer NOT NULL, FOREIGN KEY (user_id) REFERENCES user(id)\n"
+                    + ");";
+            
+            stmt.execute(tweetsSQL);
+                    
+            String followingSQL="CREATE TABLE IF NOT EXISTS following (\n"
+                    + "	following integer NOT NULL, \n"
+                    + "	followed integer NOT NULL, \n"
+                    + " FOREIGN KEY (following) REFERENCES user(id) \n,"
+                    + " FOREIGN KEY (followed) REFERENCES user(id) \n"
+                    + ");";
+            
+            stmt.execute(followingSQL);
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
