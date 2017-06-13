@@ -1,11 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head> Fritter
+  <title>Fritz Up?</title>
+  <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 <body>
+  <header class="header">
+    <div class="container">
+      <ul class="navigation">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">Sizzling</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+<div><h1> Fritter <h1> </div>
+
+<div class="userIn">
+  <li> "This is user in" </li>
+  <div class="newUser">
+  <li> "New User?" </li>
+  <li> "User Name:" </li>
+  <li> "Password:" </li>
+  <li> "Button" </li>
+</div>
+  <div class="retUser">
+  <li> "Returning User?" </li>
+  <li> "User Name:" </li>
+  <li> "Password:" </li>
+  <li> "Login Button" </li>
+</div>
+</div>
+
 
 {% for a in Tweets %}
-<div>
+<div class ="Sizzling">
     <ul>
         <li>{{a.username}} + nbsp + {{a.datetime}}</li>
         <li>{{a.content}}</li>
@@ -14,7 +44,7 @@
 {% endfor %}
 
 
-<script>
+<!-- <script>
       console.log("I am here");
 var xhr = new XMLHttpRequest();
 xhr.open('GET', '/data');
@@ -34,7 +64,7 @@ xhr.onload = function(evt) {
     }
 };
 xhr.send();
-</script>
+</script> -->
 
 </body>
 </html>

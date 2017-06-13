@@ -1,0 +1,211 @@
+/* BASE STYLES ----------------------- */
+body {
+  background: #f5eee0 url(http://newline-course-assets.s3.amazonaws.com/images/keytar/pattern.jpg);
+  color: #6f6f6f;
+  font-family: 'Montserrat', monospace;
+  font-size: 14px;
+  margin: 0;
+}
+
+h1 {
+  font-family: 'Bungee', Helvetica, Arial, sans-serif;
+  font-size: 36px;
+  font-weight: normal;
+  margin: 0;
+}
+
+h2 {
+  color: #212a2d;
+  font-family: 'Bungee', Helvetica, Arial, sans-serif;
+  font-size: 26px;
+  font-weight: normal;
+  margin-top: 60px;
+}
+
+h3 {
+  color: #865aa0;
+  font-family: 'Bungee', Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+h4 {
+  color: #865aa0;
+  font-family: 'Bungee', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+p {
+  line-height: 24px;
+  margin: 8px 0;
+}
+
+strong { color: #2a1c29; }
+a { color: #ac43ec; }
+
+a.button {
+  background: #ac43ec;
+  border-radius: 4px;
+  color: #ffffff;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin: 10px 0;
+  padding: 8px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.container {
+  margin: auto;
+  overflow: auto;
+  width: 900px;
+}
+
+.small-text {
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.content-block {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 0 0 4px 4px;
+  border-top: 4px solid #eedbf7;
+  margin: 40px 0;
+}
+
+/* HEADER ----------------------- */
+.header {
+  background: #212a2d;
+  overflow: auto;
+}
+
+.header .logo {
+  float: left;
+  padding: 10px 0;
+}
+
+.header .navigation {
+  float: left;
+  list-style: none;
+  margin: 20px 0 0 -72px;
+  padding: 0;
+}
+
+.header .navigation li {
+  float: left;
+  padding: 20px;
+}
+
+.header .navigation li a {
+  color: #f5eee0;
+  font-weight: bold;
+  padding: 4px;
+  text-decoration: none;
+}
+
+.header .navigation li a.active,
+.header .navigation li a:hover {
+  border-bottom: 2px solid #ac43ec;
+}
+
+/* MAIN ----------------------- */
+.main .primary {
+  float: left;
+  margin-right: 5%;
+  width: 60%;
+}
+
+.main .secondary {
+  float: right;
+  margin-top: 100px;
+  width: 35%;
+}
+
+.main .Sizzling {
+  background: #ffffff;
+  border-left: 4px solid #ac43ec;
+  border-radius: 0 4px 4px 0;
+  margin: 40px 0;
+  padding: 40px 28px 13px;
+  position: relative;
+}
+
+.main .keytar-review-inner {
+  overflow: auto;
+}
+
+.main .keytar-review .button {
+  float: right;
+}
+.main .customer-name {
+  border-top: 1px dashed #e0d9cf;
+  color: #ac43ec;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 10px 0;
+  padding-top: 20px;
+}
+
+.main .customer-title {
+  color: #d3a9e6;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.main .customer-picture {
+  background: #eedbf7;
+  border-radius: 50%;
+  display: block;
+  margin: -70px auto 20px;
+  padding: 4px;
+}
+
+/* FOOTER ----------------------- */
+.userIn {
+  background: blue;
+  margin: 80px 0 0 0;
+  overflow: auto;
+}
+
+.userIn .newUser {
+  display: block;
+  float: left;
+  position: relative;
+  width: 50%;
+}
+
+.userIn .retUser {
+  display: block;
+  float: left;
+  position: relative;
+  width: 50%;
+}
+
+  .header .navigation {
+    float: none;
+    margin: 0 0 20px 0;
+  }
+
+  .header .navigation li {
+    float: none;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .container {
+    margin: 0 20px;
+    width: auto;
+  }
+
+  .main .primary,
+  .main .secondary {
+    float: none;
+    margin: 60px 0;
+    width: 100%;
+  }
+
+}
