@@ -39,11 +39,12 @@
 </div>
 
 
-{% for a in Tweets %}
+{% for a in Feed %}
 <div class ="Sizzling">
     <ul>
-        <li>{{a.username}} + nbsp + {{a.datetime}}</li>
+        <li>{{a.username}}</li>
         <li>{{a.content}}</li>
+        <li>{{a.datetime}}</li>
     </ul>
 </div>
 {% endfor %}
