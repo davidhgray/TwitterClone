@@ -1,16 +1,21 @@
 
-User
-  ID integer PK
+User - 1 row per user account
+  ID integer PK system generated unique inter key
   UserName String
   email String
   password String
 
-Tweets
-  ID integer PK
-  User-ID integer FK
-  Content String
-  dateTime String
+Tweets  - 1 row per tweeted content
+  ID integer PK system generated unique inter key
+  Content String   this is the content of the tweet
 
-UserFollowing
-  Followed Integer FK User
-  Follower Integer FK User  
+UserTweets  - 1 row per tweet per user tweeting
+    id integer PK system generated unique inter key
+	TweetId integer FK to Tweets -the tweet ID matching the content
+	UserId integer FK to User - the userid of the user tweeting or re-tweeting
+  	dateTime String - date of this tweet or retweet
+  	originalUserID; -- the user id of the one who originally tweeted the content - null if you are original tweeting
+  	
+Following - 1 row per user following someone else
+  Followed Integer FK User --  Id of user being followed
+  Follower Integer FK User  -- Id of user following

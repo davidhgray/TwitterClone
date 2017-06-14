@@ -1,8 +1,8 @@
 package twitter;
 
-public class Tweets {
+public class Tweet {
 
-	public Tweets() {
+	public Tweet() {
 	 int ID;
      int user_ID; 
      String content;

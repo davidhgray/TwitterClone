@@ -29,18 +29,18 @@ public class Twitter {
 
 		Connection conn = connect();
 		
-		ArrayList<Feed> TweetList = new ArrayList<Feed>();
-		TweetList.getFeed("david",conn);
+//		ArrayList<Timeline> tweetList = new ArrayList<Timeline>();
+//		tweetList.get(0);
 		
 		createTables();
 
 		// root directory
-		get("/", (req, res) -> {
+//		get("/", (req, res) -> {
+//
+//			JtwigTemplate template = JtwigTemplate.classpathTemplate("twitter.html");
+//			JtwigModel model = JtwigModel.newModel().with("Feed", tweetList);
 
-			JtwigTemplate template = JtwigTemplate.classpathTemplate("twitter.html");
-			JtwigModel model = JtwigModel.newModel().with("Feed", TweetList);
-
-			return template.render(model);
+//			return template.render(model);
 			// String htmlBody = "";
 			//
 			// for (int i = 0; i < AlbumCatalog.size(); i++) {
@@ -55,7 +55,7 @@ public class Twitter {
 			// + "</h2></body></html>";
 			// return html;
 
-		});
+//		});
 
 		// // JSON return
 		// get("/data", (req, res) -> {
@@ -101,13 +101,25 @@ public class Twitter {
 			stmt.execute(usersSQL);
 
 			String tweetsSQL = "CREATE TABLE IF NOT EXISTS tweets (\n" + "	id integer PRIMARY KEY,\n"
-					+ " content text,\n" + "	dateTime text, \n"
-					+ "	user_id integer NOT NULL, FOREIGN KEY (user_id) REFERENCES user(id)\n" + ");";
+					+ " content text,\n" + "	dateTime text);";
+					
 
 			stmt.execute(tweetsSQL);
+			
+			  	
+			String userTweetsSQL = "CREATE TABLE IF NOT EXISTS userTweets (\n" + "	tweetId integer PRIMARY KEY,\n"
+					+ " userId integer,\n"
+					+ " dateTime text,\n" 
+					+ " originalUserId integer,\n"
+					+ " FOREIGN KEY (TweetId) REFERENCES tweets(id) \n,"
+								+ " FOREIGN KEY (userId) REFERENCES user(id) ,\n" 
+			  	    + " FOREIGN KEY (originalUserId) REFERENCES user(id) );";
+					
 
-			String followingSQL = "CREATE TABLE IF NOT EXISTS following (\n" + "	following integer NOT NULL, \n"
-					+ "	followed integer NOT NULL, \n" + " FOREIGN KEY (following) REFERENCES user(id) \n,"
+			stmt.execute(userTweetsSQL);
+
+			String followingSQL = "CREATE TABLE IF NOT EXISTS following (\n" + "	follower integer NOT NULL, \n"
+					+ "	followed integer NOT NULL, \n" + " FOREIGN KEY (follower) REFERENCES user(id) \n,"
 					+ " FOREIGN KEY (followed) REFERENCES user(id) \n" + ");";
 
 			stmt.execute(followingSQL);
