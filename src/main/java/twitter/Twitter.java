@@ -93,7 +93,7 @@ public class Twitter {
         String usersSQL = "CREATE TABLE IF NOT EXISTS users (\n"
                 + "	id integer PRIMARY KEY,\n"
                 + "	username text NOT NULL,\n"
-                + "	email text \n"
+                + "	email text ,\n"
                 + "	password text \n"
                 + ");";
         
