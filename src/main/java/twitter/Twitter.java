@@ -35,12 +35,13 @@ public class Twitter {
 		createTables();
 
 		// root directory
-//		get("/", (req, res) -> {
-//
-//			JtwigTemplate template = JtwigTemplate.classpathTemplate("twitter.html");
-//			JtwigModel model = JtwigModel.newModel().with("Feed", tweetList);
+		get("/", (req, res) -> {
 
-//			return template.render(model);
+			Timeline timeline = Timeline.getTimeline("david");
+			JtwigTemplate template = JtwigTemplate.classpathTemplate("twitter.html");
+			JtwigModel model = JtwigModel.newModel().with("timeline", timeline.tweets);
+
+			return template.render(model);
 			// String htmlBody = "";
 			//
 			// for (int i = 0; i < AlbumCatalog.size(); i++) {
@@ -55,7 +56,7 @@ public class Twitter {
 			// + "</h2></body></html>";
 			// return html;
 
-//		});
+		});
 
 		// // JSON return
 		// get("/data", (req, res) -> {
