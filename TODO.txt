@@ -1,0 +1,6 @@
+- fix formatting of for loop on the twitter main page.
+- code for new user.
+- code for login user new page or same?
+- code for posting a tweet.
+- On logged in users- page new html ?
+   Add links for users Tweets and Following and Followers

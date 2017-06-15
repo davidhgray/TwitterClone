@@ -25,7 +25,7 @@ public class Timeline {
 		
 		// SQL statement for creating a new table
 
-		String timeLineSQL = "select a.username,content,ut.dateTime from users, following,tweets ,userTweets ut , users a  where users.username='" + "david" + "'and users.id=following.follower and ut.userid=following.followed and ut.userid=a.id and tweets.id=ut.tweetid;";		
+		String timeLineSQL = "select a.username,content,ut.dt from users, following,tweets ,userTweets ut , users a  where users.username='" + "david" + "'and users.id=following.follower and ut.userid=following.followed and ut.userid=a.id and tweets.id=ut.tweetid;";		
 		
 		try (Connection conn = DriverManager.getConnection(url)){
 				   
@@ -36,7 +36,7 @@ public class Timeline {
 					       while (rs.next()) {
 					               Tweet a =new Tweet(rs.getString("username"),
 					                           rs.getString("content"),
-					                           rs.getString("dateTime"));
+					                           rs.getString("dt"));
 					            holddata.add(a);
 					        }
 					    }

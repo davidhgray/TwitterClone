@@ -23,8 +23,7 @@ public class Twitter {
 
 		// root is 'src/main/resources', so put files in
 		// 'src/main/resources/public'
-		staticFiles.location("/public"); // Static files
-
+		staticFiles.location("public/"); // Static files
 		port(3001);
 
 		Connection conn = connect();
@@ -38,7 +37,7 @@ public class Twitter {
 		get("/", (req, res) -> {
 
 			Timeline timeline = Timeline.getTimeline("david");
-			JtwigTemplate template = JtwigTemplate.classpathTemplate("twitter.html");
+			JtwigTemplate template = JtwigTemplate.classpathTemplate("public/twitter.html");
 			JtwigModel model = JtwigModel.newModel().with("timeline", timeline.tweets);
 
 			return template.render(model);
