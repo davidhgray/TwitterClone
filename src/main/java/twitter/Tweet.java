@@ -7,14 +7,14 @@ public class Tweet {
     int user_id;
     String username;
     String content;
-    String dateTime;
+    String tweetDt;
 
     
 	// this contstructor will be used when building tweets for Timeline
-    public Tweet(String username, String content, String dateTime) {
+    public Tweet(String username, String content, String tweetDt) {
 	 this.username = username;
      this.content=content;
-     this.dateTime=dateTime;
+     this.tweetDt=tweetDt;
 	}
 
     //this constructor will be used for building new tweet

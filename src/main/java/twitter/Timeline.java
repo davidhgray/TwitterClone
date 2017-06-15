@@ -30,9 +30,7 @@ public class Timeline {
 		try (Connection conn = DriverManager.getConnection(url)){
 				   
 			try (PreparedStatement stmt = conn.prepareStatement(timeLineSQL);
-					         ResultSet rs = stmt.executeQuery()) {
-//                           ArrayList<Tweet> holddata;
-				
+					       ResultSet rs = stmt.executeQuery()) {				
 					       while (rs.next()) {
 					               Tweet a =new Tweet(rs.getString("username"),
 					                           rs.getString("content"),

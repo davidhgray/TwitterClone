@@ -20,11 +20,15 @@
 <div class="userInMaster">
   <div class="userIn">
   <h3> New User? </h3>
-  <input type="text" name="userName" placeholder="Enter Username Here">
-   <br>
-   <input type="text" name="password" placeholder="Enter Password Here">
-    <br>
-  <button> Create New Account </button>
+  <form action="/newUser" method="post">
+      <input type="text" id="userName" name="UserName" placeholder="Enter Username Here">
+      <br>
+      <input type="text" id="password" name="Password" placeholder="Enter Password Here">
+      <br>
+      <input type="submit" id="createNew" value="Create New Account"/ >
+      <br>
+      <p>Result:&nbsp;<span id="result"></span></p>
+  </form>
   <br>
 </div>
 <div class="userIn">
@@ -44,11 +48,51 @@
     <ul>
         <li>{{a.username}}</li>
         <li>{{a.content}}</li>
-        <li>{{a.datetime}}</li>
+        <li>{{a.tweetDt}}</li>
     </ul>
 </div>
 {% endfor %}
 
+
+<script>
+// AJAX posting x-www-form-urlencoded
+var button = document.getElementById('createNew');
+button.onclick = function () {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/test');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var result = document.getElementById('result');
+            result.innerHTML = xhr.responseText;
+        } else if (xhr.status !== 200) {
+            alert('Request failed.  Returned status of ' + xhr.status);
+        }
+    };
+    // var first = document.getElementById('a').value;
+    // var second = document.getElementById('b').value;
+    // var body = 'first=' + encodeURIComponent(first) + '&second=' + encodeURIComponent(second);
+     console.log(body);
+    xhr.send(body);
+};
+
+// // AJAX posting json
+// var cat_button = document.getElementById('cat_button');
+// cat_button.onclick = function () {
+//     var xhr = new XMLHttpRequest();
+//     xhr.open('POST', '/jsonpost');
+//     xhr.setRequestHeader('Content-Type', 'application/json');
+//     xhr.onload = function() {
+//         if (xhr.status === 200) {
+//             console.log(xhr.responseText);
+//         } else if (xhr.status !== 200) {
+//             alert('Request failed.  Returned status of ' + xhr.status);
+//         }
+//     };
+//     var cat = {tail: 'brown', age: 4};
+//     xhr.send(JSON.stringify(cat));
+// };
+</script>
 
 <!-- <script>
       console.log("I am here");

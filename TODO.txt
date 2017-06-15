@@ -4,3 +4,5 @@
 - code for posting a tweet.
 - On logged in users- page new html ?
    Add links for users Tweets and Following and Followers
+- session handling across packages
+- SALT & encrypt password in service (SALT - add an extra string to users password before encrypting)
