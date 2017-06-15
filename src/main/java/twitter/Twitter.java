@@ -101,7 +101,7 @@ public class Twitter {
 			stmt.execute(usersSQL);
 
 			String tweetsSQL = "CREATE TABLE IF NOT EXISTS tweets (\n" + "	id integer PRIMARY KEY,\n"
-					+ " content text,\n" + "	dateTime text);";
+					+ " content text,\n" + "	dt text DEFAULT CURRENT_TIMESTAMP);";
 					
 
 			stmt.execute(tweetsSQL);
@@ -109,7 +109,7 @@ public class Twitter {
 			  	
 			String userTweetsSQL = "CREATE TABLE IF NOT EXISTS userTweets (\n" + "	tweetId integer PRIMARY KEY,\n"
 					+ " userId integer,\n"
-					+ " dateTime text,\n" 
+					+ " dt text DEFAULT CURRENT_TIMESTAMP,\n" 
 					+ " originalUserId integer,\n"
 					+ " FOREIGN KEY (TweetId) REFERENCES tweets(id) \n,"
 								+ " FOREIGN KEY (userId) REFERENCES user(id) ,\n" 
