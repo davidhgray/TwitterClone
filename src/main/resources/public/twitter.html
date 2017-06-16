@@ -20,7 +20,7 @@
 <div class="userInMaster">
   <div class="userIn">
   <h3> New User? </h3>
-  <form action="/newUser" method="post">
+  <!-- <form action="/newUser" method="post"> -->
       <input type="text" id="userName" name="UserName" placeholder="Enter Username Here">
       <br>
       <input type="password" id="password" name="Password" placeholder="Enter Password Here">
@@ -29,7 +29,7 @@
       <br>
       <input type="submit" id="createNew" value="Create New Account"/ >
       <br>
-  </form>
+  <!-- </form> -->
   <br>
 </div>
 <div class="userIn">
@@ -41,6 +41,8 @@
    <input type="password" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
     <br>
       <input type="submit" id="returnUser" value="Log In"/ >
+</div>
+<div id="msg_div">
 </div>
 <br>
 </div>
@@ -59,45 +61,28 @@
 
 
 <script>
-// script for adding new users
+// script for creating new  user
 // AJAX posting x-www-form-urlencoded
-var button = document.getElementById('createNew');
-button.onclick = function () {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/newUser');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            var result = document.getElementById('result');
-            result.innerHTML = xhr.responseText;
-        } else if (xhr.status !== 200) {
-            alert('Request failed.  Returned status of ' + xhr.status);
+var returnButton = document.getElementById('createNew');
+returnButton.onclick = function () {
+    var xhrReturn = new XMLHttpRequest();
+    xhrReturn.open('POST', '/newUser');
+    xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhrReturn.onload = function() {
+        if (xhrReturn.status === 200) {
+            var rresult = document.getElementById('msg_div');
+            rresult.innerHTML = xhrReturn.responseText;
+        } else if (xhrReturn.status !== 200) {
+            alert('Request failed.  Returned status of ' + xhrReturn.status);
         }
     };
-    // var first = document.getElementById('a').value;
-    // var second = document.getElementById('b').value;
-    // var body = 'first=' + encodeURIComponent(first) + '&second=' + encodeURIComponent(second);
-    //  console.log(body);
-    // xhr.send(body);
+    var first = document.getElementById('userName').value;
+    var second = document.getElementById('password').value;
+    var third = document.getElementById('email').value;
+    var returnBody = 'userName=' + encodeURIComponent(first) + '&password=' + encodeURIComponent(second) + '&email=' + encodeURIComponent(third);
+    console.log(returnBody);
+    xhrReturn.send(returnBody);
 };
-
-// // AJAX posting json
-// var cat_button = document.getElementById('cat_button');
-// cat_button.onclick = function () {
-//     var xhr = new XMLHttpRequest();
-//     xhr.open('POST', '/jsonpost');
-//     xhr.setRequestHeader('Content-Type', 'application/json');
-//     xhr.onload = function() {
-//         if (xhr.status === 200) {
-//             console.log(xhr.responseText);
-//         } else if (xhr.status !== 200) {
-//             alert('Request failed.  Returned status of ' + xhr.status);
-//         }
-//     };
-//     var cat = {tail: 'brown', age: 4};
-//     xhr.send(JSON.stringify(cat));
-// };
-
 // script for logging in existing users
 // AJAX posting x-www-form-urlencoded
 var returnButton = document.getElementById('returnUser');
@@ -107,7 +92,7 @@ returnButton.onclick = function () {
     xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhrReturn.onload = function() {
         if (xhrReturn.status === 200) {
-            var rresult = document.getElementById('result');
+            var rresult = document.getElementById('msg_div');
             rresult.innerHTML = xhrReturn.responseText;
         } else if (xhrReturn.status !== 200) {
             alert('Request failed.  Returned status of ' + xhrReturn.status);
@@ -120,28 +105,5 @@ returnButton.onclick = function () {
     xhrReturn.send(returnBody);
 };
 </script>
-
-<!-- <script>
-      console.log("I am here");
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/data');
-xhr.onload = function(evt) {
-      console.log("I am inside");
-   if (xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        for (var i=0;i < response.length;i++){
-          console.log(response[i].artist);
-          var x = document.createElement("div");
-          x.innerHTML="Artist: " +   response[i].artist + " Title: " + response[i].title;
-          document.body.appendChild(x);
-        }
-        console.log(response);
-    } else {
-        alert('Request failed.  Returned status of ' + xhr.status);
-    }
-};
-xhr.send();
-</script> -->
-
 </body>
 </html>
