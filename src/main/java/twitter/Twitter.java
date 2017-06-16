@@ -48,8 +48,8 @@ public class Twitter {
 
 		post("/newUser", (req, res) -> {
 			System.out.print("/newUser ");
-			String usrnm = req.queryParams("UserName");
-			String passw = req.queryParams("Password");
+			String usrnm = req.queryParams("userName");
+			String passw = req.queryParams("password");
 			String email = req.queryParams("email");
 			String hashedPassw =Twitter.hashPassword(passw);
 			
