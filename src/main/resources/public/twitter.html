@@ -46,6 +46,12 @@
 </div>
 </div>
 
+<div class="newTweet">
+  <input type="text" name="newTweet" placeholder="Tweet here!" id="newTweetContent">
+  <br>
+  <input type="submit" id="newTweetSubmit" value="Go"/ >
+</div>
+<br>
 
 {% for a in timeline %}
 <div class ="Sizzling">
@@ -115,9 +121,29 @@ returnButton.onclick = function () {
     };
     var first = document.getElementById('returnUserName').value;
     var second = document.getElementById('returnUserPassword').value;
-    var returnBody = 'returnUserName=' + encodeURIComponent(first) + '&returnUserPassword=' + encodeURIComponent(second);
+    var returnBody = 'returnUserName=' + encodeURIComponent(first) + '&returnUserName=' + encodeURIComponent(second);
     console.log(returnBody);
     xhrReturn.send(returnBody);
+};
+
+// submit new tweet
+var newTweetButton = document.getElementById('newTweetSubmit');
+newTweetButton.onclick = function () {
+    var xhrNewTweet = new XMLHttpRequest();
+    xhrNewTweet.open('POST', '/');
+    xhrNewTweet.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhrNewTweet.onload = function() {
+        if (xhrNewTweet.status === 200) {
+            var nTresult = document.getElementById('result');
+            ntresult.innerHTML = xhrNewTweet.responseText;
+        } else if (xhrNewTweet.status !== 200) {
+            alert('Request failed.  Returned status of ' + xhrNewTweet.status);
+        }
+    };
+    var newTweet = document.getElementById('newTweetContent').value;
+    var returnBody = 'newTweetContent=' + encodeURIComponent(newTweet) + '&returnUserName=david';
+    console.log(returnBody);
+    xhrNewTweet.send(returnBody);
 };
 </script>
 

@@ -122,6 +122,7 @@ public class Twitter {
 			// real code starts here
 
 			try (Connection conn2 = DriverManager.getConnection(url)) {
+//				change the line below to select user id AND password
 				String checkUserSQL = "select password from Users where userName = ?";
 				PreparedStatement checkUserStmt = null;
 				checkUserStmt = conn2.prepareStatement(checkUserSQL);
