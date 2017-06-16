@@ -1,7 +1,7 @@
 package twitter;
 
-public class Users {
-	public Users() {
+public class User {
+	public User() {
 		int id;
 		String username;
 		String email;

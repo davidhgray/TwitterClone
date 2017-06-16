@@ -43,43 +43,16 @@ public class Twitter {
 			JtwigModel model = JtwigModel.newModel().with("timeline", timeline.tweets);
 
 			return template.render(model);
-			// html return example
-			// String htmlBody = "";
-			//
-			// for (int i = 0; i < AlbumCatalog.size(); i++) {
-			//
-			// htmlBody = htmlBody + "<div> Artist: " +
-			// AlbumCatalog.get(i).artist + " Title:"
-			// + AlbumCatalog.get(i).title + "</div>";
-			// }
-			//
-			// String html = "<!DOCTYPE
-			// html><html><head><h1>Albums</h1></head><body><h2>" + htmlBody
-			// + "</h2></body></html>";
-			// return html;
 
 		});
-
-		// // JSON return example
-		// get("/data", (req, res) -> {
-		// Gson mygson = new Gson();
-		// String json;
-		// json = mygson.toJson(Tweets);
-		// // System.out.println(json);
-		// return json;
-		// });
 
 		post("/newUser", (req, res) -> {
 			System.out.print("/newUser ");
 			String usrnm = req.queryParams("UserName");
 			String passw = req.queryParams("Password");
 			String email = req.queryParams("email");
-
-			passw += SALT;
-
-			MessageDigest md = MessageDigest.getInstance("SHA");
-			md.update(passw.getBytes());
-			String digest = new String(md.digest());
+			String hashedPassw =Twitter.hashPassword(passw);
+			
 			Connection conn2 = null;
 			try {
 				conn2 = DriverManager.getConnection(url);
@@ -88,7 +61,7 @@ public class Twitter {
 				newUserStmt = conn2.prepareStatement(newuserSQL);
 
 				newUserStmt.setString(1, usrnm);
-				newUserStmt.setString(2, digest);
+				newUserStmt.setString(2, hashedPassw);
 				newUserStmt.setString(3, email);
 				int status = newUserStmt.executeUpdate();
 			} catch (SQLException e) {
@@ -102,23 +75,18 @@ public class Twitter {
 					System.out.println(ex.getMessage());
 				}
 			}
-			System.out.println(digest);
-			return usrnm;
-			// try {
-			// int a = Integer.parseInt(first);
-			// int b = Integer.parseInt(second);
-			// return new Integer(a + b).toString();
-			// } catch (NumberFormatException ex) {
-			// System.out.println("bad input");
-			// }
-			// return "failure";
+			System.out.println(hashedPassw);
+			
+			return usrnm; //TODO what do we want to do after we create the account? Make them login?
 		});
+		
 		post("/returnUser", (request, response) -> {
 			// helper code
 			System.out.print("/returnUser ");
 			System.out.println(request.queryParams());
 			String usrnm = request.queryParams("returnUserName");
 			String passw = request.queryParams("returnUserPassword");
+			String storedPassw="";
 			// real code starts here
 
 			try (Connection conn2 = DriverManager.getConnection(url)) {
@@ -128,22 +96,41 @@ public class Twitter {
 				checkUserStmt = conn2.prepareStatement(checkUserSQL);
 
 				checkUserStmt.setString(1, usrnm);
-				ResultSet storedPassword = checkUserStmt.executeQuery();
+				ResultSet rs = checkUserStmt.executeQuery();
 				{
-					while (storedPassword.next()) {
-						System.out.println(storedPassword.getString("password"));
+					while (rs.next()) {
+						System.out.println(rs.getString("password"));	
+						storedPassw =(rs.getString("password"));
 					}
-					System.out.println(storedPassword.getString("password"));
-
+					String hashedPassw =Twitter.hashPassword(passw);
+					System.out.println(hashedPassw);	
+					if (!storedPassw.equals(hashedPassw)){
+						System.out.println("Invalid User, password combination");
+						return "Invalid User, password combination";
+					}
+					else {
+						System.out.println("Welcome "+ usrnm);
+						return "Welcome " + usrnm;
+					}
 				}
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 			} 
-			return usrnm + passw;
+			return usrnm + passw;// what do we want to do after they login?
 
 		});
 	}
 
+	public static String hashPassword(String passw) throws Exception {
+		passw += SALT;
+
+		MessageDigest md = MessageDigest.getInstance("SHA");
+		
+		md.update(passw.getBytes());
+		String digest = new String(md.digest());
+		return digest;
+	}
+	
 	public static Connection connect() {
 		Connection conn = null;
 		try {
