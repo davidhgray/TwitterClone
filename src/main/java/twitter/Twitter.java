@@ -114,6 +114,15 @@ public class Twitter {
 			// }
 			// return "failure";
 		});
+		post("/returnUser", (request, response) -> {
+			System.out.print("/returnUser ");
+			System.out.println(request.queryParams());
+			String usrnm = request.queryParams("returnUserName");
+			String passw = request.queryParams("returnUserPassword");
+			System.out.println(usrnm);
+			System.out.println(passw);
+			return usrnm + passw;
+		});
 	}
 
 	public static Connection connect() {

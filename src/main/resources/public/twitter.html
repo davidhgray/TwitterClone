@@ -20,7 +20,8 @@
 <div class="userInMaster">
   <div class="userIn">
   <h3> New User? </h3>
-  <form action="/newUser" method="post">
+  <form>
+  <!-- <form action="/newUser" method="post"> -->
       <input type="text" id="userName" name="UserName" placeholder="Enter Username Here">
       <br>
       <input type="text" id="password" name="Password" placeholder="Enter Password Here">
@@ -33,11 +34,14 @@
 </div>
 <div class="userIn">
 <h3> Returning User? </h3>
-<input type="text" name="userName" placeholder="Enter Username Here">
- <br>
- <input type="text" name="password" placeholder="Enter Password Here">
-  <br>
-<button> Log In </button>
+<div>
+<!-- <form action="/returnUser" method="post"> -->
+  <input type="text" name="returnUserName" id="returnUserName" placeholder="Enter Username Here">
+   <br>
+   <input type="text" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
+    <br>
+      <input type="submit" id="returnUser" value="Log In"/ >
+</div>
 <br>
 </div>
 </div>
@@ -55,11 +59,12 @@
 
 
 <script>
+// script for adding new users
 // AJAX posting x-www-form-urlencoded
 var button = document.getElementById('createNew');
 button.onclick = function () {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/test');
+    xhr.open('POST', '/newUser');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
         if (xhr.status === 200) {
@@ -72,8 +77,8 @@ button.onclick = function () {
     // var first = document.getElementById('a').value;
     // var second = document.getElementById('b').value;
     // var body = 'first=' + encodeURIComponent(first) + '&second=' + encodeURIComponent(second);
-     console.log(body);
-    xhr.send(body);
+    //  console.log(body);
+    // xhr.send(body);
 };
 
 // // AJAX posting json
@@ -92,6 +97,28 @@ button.onclick = function () {
 //     var cat = {tail: 'brown', age: 4};
 //     xhr.send(JSON.stringify(cat));
 // };
+
+// script for logging in existing users
+// AJAX posting x-www-form-urlencoded
+var returnButton = document.getElementById('returnUser');
+returnButton.onclick = function () {
+    var xhrReturn = new XMLHttpRequest();
+    xhrReturn.open('POST', '/returnUser');
+    xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhrReturn.onload = function() {
+        if (xhrReturn.status === 200) {
+            var rresult = document.getElementById('result');
+            rresult.innerHTML = xhrReturn.responseText;
+        } else if (xhrReturn.status !== 200) {
+            alert('Request failed.  Returned status of ' + xhrReturn.status);
+        }
+    };
+    var first = document.getElementById('returnUserName').value;
+    var second = document.getElementById('returnUserPassword').value;
+    var returnBody = encodeURIComponent(first) + '&' + encodeURIComponent(second);
+    console.log(returnBody);
+    xhrReturn.send(returnBody);
+};
 </script>
 
 <!-- <script>
