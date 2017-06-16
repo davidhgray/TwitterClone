@@ -22,7 +22,7 @@ import java.sql.PreparedStatement;
 public class Twitter {
 	public final static String SALT = "ELIZABETHDAVID";
 	public final static String url = "jdbc:sqlite:fritter.db";
-	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -75,34 +75,32 @@ public class Twitter {
 			System.out.print("/newUser ");
 			String usrnm = req.queryParams("UserName");
 			String passw = req.queryParams("Password");
-			
+
 			passw += SALT;
-			
+
 			MessageDigest md = MessageDigest.getInstance("SHA");
-			md.update(usrnm.getBytes());
+			md.update(passw.getBytes());
 			String digest = new String(md.digest());
-			
-//			try (Connection conn2 = DriverManager.getConnection(url)){
-//				   PreparedStatement newUserStmt = null;
-//				   String newuserSQL = "insert into Users (username,password2) values(?,?)";
-//				newUserStmt.setString(1, usrnm);
-//				newUserStmt.setBinaryStream(2, (InputStream) digest);
-//				try (PreparedStatement stmt = conn.prepareStatement(newuserSQL);
-//						
-//						       ResultSet rs = stmt.executeQuery()) {				
-//						       while (rs.next()) {
-//						               Tweet a =new Tweet(rs.getString("username"),
-//						                           rs.getString("content"),
-//						                           rs.getString("dt"));
-////						            holddata.add(a);
-//						        }
-//						    }
-//			} catch (SQLException e) {
-//				System.out.println(e.getMessage());
-//			}
-					
-			
-			
+			Connection conn2 = null;
+			try {conn2 = DriverManager.getConnection(url);
+				 String newuserSQL = "insert into Users (username,password) values(?,?)";
+				 PreparedStatement newUserStmt = null;
+				 newUserStmt = conn2.prepareStatement(newuserSQL);
+
+				 newUserStmt.setString(1, usrnm);
+				 newUserStmt.setString(2, digest);
+				int status = newUserStmt.executeUpdate();
+			} catch (SQLException e) {
+					System.out.println(e.getMessage());
+			} finally {
+				try{
+					if (conn2 != null){
+						conn2.close();
+					}
+				} catch (SQLException ex){
+					System.out.println(ex.getMessage());
+				}
+			}
 			System.out.println(digest);
 			return usrnm;
 			// try {
