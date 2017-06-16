@@ -20,15 +20,15 @@
 <div class="userInMaster">
   <div class="userIn">
   <h3> New User? </h3>
-  <form>
-  <!-- <form action="/newUser" method="post"> -->
+  <form action="/newUser" method="post">
       <input type="text" id="userName" name="UserName" placeholder="Enter Username Here">
       <br>
-      <input type="text" id="password" name="Password" placeholder="Enter Password Here">
+      <input type="password" id="password" name="Password" placeholder="Enter Password Here">
+      <br>
+      <input type="email" name="email" value="Enter email here">
       <br>
       <input type="submit" id="createNew" value="Create New Account"/ >
       <br>
-      <p>Result:&nbsp;<span id="result"></span></p>
   </form>
   <br>
 </div>
@@ -38,7 +38,7 @@
 <!-- <form action="/returnUser" method="post"> -->
   <input type="text" name="returnUserName" id="returnUserName" placeholder="Enter Username Here">
    <br>
-   <input type="text" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
+   <input type="password" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
     <br>
       <input type="submit" id="returnUser" value="Log In"/ >
 </div>
@@ -115,7 +115,7 @@ returnButton.onclick = function () {
     };
     var first = document.getElementById('returnUserName').value;
     var second = document.getElementById('returnUserPassword').value;
-    var returnBody = encodeURIComponent(first) + '&' + encodeURIComponent(second);
+    var returnBody = 'returnUserName=' + encodeURIComponent(first) + '&returnUserPassword=' + encodeURIComponent(second);
     console.log(returnBody);
     xhrReturn.send(returnBody);
 };

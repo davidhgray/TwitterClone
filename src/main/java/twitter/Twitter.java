@@ -39,10 +39,8 @@ public class Twitter {
 		get("/", (req, res) -> {
 
 			Timeline timeline = Timeline.getTimeline("david");
-			JtwigTemplate template = JtwigTemplate
-					.classpathTemplate("public/twitter.html");
-			JtwigModel model = JtwigModel.newModel().with("timeline",
-					timeline.tweets);
+			JtwigTemplate template = JtwigTemplate.classpathTemplate("public/twitter.html");
+			JtwigModel model = JtwigModel.newModel().with("timeline", timeline.tweets);
 
 			return template.render(model);
 			// html return example
@@ -75,6 +73,7 @@ public class Twitter {
 			System.out.print("/newUser ");
 			String usrnm = req.queryParams("UserName");
 			String passw = req.queryParams("Password");
+			String email = req.queryParams("email");
 
 			passw += SALT;
 
@@ -82,22 +81,24 @@ public class Twitter {
 			md.update(passw.getBytes());
 			String digest = new String(md.digest());
 			Connection conn2 = null;
-			try {conn2 = DriverManager.getConnection(url);
-				 String newuserSQL = "insert into Users (username,password) values(?,?)";
-				 PreparedStatement newUserStmt = null;
-				 newUserStmt = conn2.prepareStatement(newuserSQL);
+			try {
+				conn2 = DriverManager.getConnection(url);
+				String newuserSQL = "insert into Users (username,password, email) values(?,?,?)";
+				PreparedStatement newUserStmt = null;
+				newUserStmt = conn2.prepareStatement(newuserSQL);
 
-				 newUserStmt.setString(1, usrnm);
-				 newUserStmt.setString(2, digest);
+				newUserStmt.setString(1, usrnm);
+				newUserStmt.setString(2, digest);
+				newUserStmt.setString(3, email);
 				int status = newUserStmt.executeUpdate();
 			} catch (SQLException e) {
-					System.out.println(e.getMessage());
+				System.out.println(e.getMessage());
 			} finally {
-				try{
-					if (conn2 != null){
+				try {
+					if (conn2 != null) {
 						conn2.close();
 					}
-				} catch (SQLException ex){
+				} catch (SQLException ex) {
 					System.out.println(ex.getMessage());
 				}
 			}
@@ -113,13 +114,32 @@ public class Twitter {
 			// return "failure";
 		});
 		post("/returnUser", (request, response) -> {
+			// helper code
 			System.out.print("/returnUser ");
 			System.out.println(request.queryParams());
 			String usrnm = request.queryParams("returnUserName");
 			String passw = request.queryParams("returnUserPassword");
-			System.out.println(usrnm);
-			System.out.println(passw);
+			// real code starts here
+
+			try (Connection conn2 = DriverManager.getConnection(url)) {
+				String checkUserSQL = "select password from Users where userName = ?";
+				PreparedStatement checkUserStmt = null;
+				checkUserStmt = conn2.prepareStatement(checkUserSQL);
+
+				checkUserStmt.setString(1, usrnm);
+				ResultSet storedPassword = checkUserStmt.executeQuery();
+				{
+					while (storedPassword.next()) {
+						System.out.println(storedPassword.getString("password"));
+					}
+					System.out.println(storedPassword.getString("password"));
+
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			} 
 			return usrnm + passw;
+
 		});
 	}
 
@@ -149,35 +169,28 @@ public class Twitter {
 
 		// SQL statement for creating a new table
 
-		String usersSQL = "CREATE TABLE IF NOT EXISTS users (\n"
-				+ "	id integer PRIMARY KEY,\n" + "	username text NOT NULL,\n"
-				+ "	email text ,\n" + "	password text \n" + ");";
+		String usersSQL = "CREATE TABLE IF NOT EXISTS users (\n" + "	id integer PRIMARY KEY,\n"
+				+ "	username text NOT NULL,\n" + "	email text ,\n" + "	password text \n" + ");";
 
-		try (Connection conn = DriverManager.getConnection(url);
-				Statement stmt = conn.createStatement()) {
+		try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
 			// create a new table
 			stmt.execute(usersSQL);
 
-			String tweetsSQL = "CREATE TABLE IF NOT EXISTS tweets (\n"
-					+ "	id integer PRIMARY KEY,\n" + " content text,\n"
-					+ "	dt text DEFAULT CURRENT_TIMESTAMP);";
+			String tweetsSQL = "CREATE TABLE IF NOT EXISTS tweets (\n" + "	id integer PRIMARY KEY,\n"
+					+ " content text,\n" + "	dt text DEFAULT CURRENT_TIMESTAMP);";
 
 			stmt.execute(tweetsSQL);
 
-			String userTweetsSQL = "CREATE TABLE IF NOT EXISTS userTweets (\n"
-					+ "	tweetId integer PRIMARY KEY,\n" + " userId integer,\n"
-					+ " dt text DEFAULT CURRENT_TIMESTAMP,\n"
-					+ " originalUserId integer,\n"
+			String userTweetsSQL = "CREATE TABLE IF NOT EXISTS userTweets (\n" + "	tweetId integer PRIMARY KEY,\n"
+					+ " userId integer,\n" + " dt text DEFAULT CURRENT_TIMESTAMP,\n" + " originalUserId integer,\n"
 					+ " FOREIGN KEY (TweetId) REFERENCES tweets(id) \n,"
 					+ " FOREIGN KEY (userId) REFERENCES user(id) ,\n"
 					+ " FOREIGN KEY (originalUserId) REFERENCES user(id) );";
 
 			stmt.execute(userTweetsSQL);
 
-			String followingSQL = "CREATE TABLE IF NOT EXISTS following (\n"
-					+ "	follower integer NOT NULL, \n"
-					+ "	followed integer NOT NULL, \n"
-					+ " FOREIGN KEY (follower) REFERENCES user(id) \n,"
+			String followingSQL = "CREATE TABLE IF NOT EXISTS following (\n" + "	follower integer NOT NULL, \n"
+					+ "	followed integer NOT NULL, \n" + " FOREIGN KEY (follower) REFERENCES user(id) \n,"
 					+ " FOREIGN KEY (followed) REFERENCES user(id) \n" + ");";
 
 			stmt.execute(followingSQL);
