@@ -7,8 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class FritterDB {
+
+	// class to contain all sql
 
 	public static final String url = "jdbc:sqlite:fritter.db";
 
@@ -59,20 +62,29 @@ public class FritterDB {
 
 	public static int insertUser(User usr) throws NoSuchAlgorithmException {
 		Connection conn = null;
-		int status=0;
+		int status = 0;
 		usr.hashPassword();
-		
+
 		try {
 			conn = DriverManager.getConnection(url);
-			String sql = "insert into Users (username,password, email) values(?,?,?)";
+
 			PreparedStatement stmt = null;
+			// check to see if user already exists
+			String sql = "select count(1) cnt from  Users where username =?";
 			stmt = conn.prepareStatement(sql);
-
 			stmt.setString(1, usr.username);
-			stmt.setString(2, usr.hashedPassword);
-			stmt.setString(3, usr.email);
-
-			status = stmt.executeUpdate();
+			ResultSet rs = stmt.executeQuery();
+			int cnt = rs.getInt("cnt");
+			if (cnt > 0) {
+				return -2;
+			} else { // insert new user
+				sql = "insert into Users (username,password, email) values(?,?,?)";
+				stmt = conn.prepareStatement(sql);
+				stmt.setString(1, usr.username);
+				stmt.setString(2, usr.hashedPassword);
+				stmt.setString(3, usr.email);
+				status = stmt.executeUpdate();
+			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -86,49 +98,109 @@ public class FritterDB {
 		}
 		System.out.println(usr.hashedPassword);
 		return status;
-		
+
 	}
-	
+
 	public static boolean checkUser(User usr) {
 		Connection conn = null;
 		usr.hashPassword();
-		
-		try {conn = DriverManager.getConnection(url);
-	
+
+		try {
+			conn = DriverManager.getConnection(url);
+
 			String sql = "select id, email, username, password from Users where userName = ? and password =?";
 			PreparedStatement stmt = null;
 			stmt = conn.prepareStatement(sql);
-	
+
 			stmt.setString(1, usr.username);
 			stmt.setString(2, usr.hashedPassword);
-	
+
 			ResultSet rs = stmt.executeQuery();
-			boolean rowFound=false;
-			
-			while (rs.next()){
-				    usr.id = rs.getInt("id");
-				    usr.email=rs.getString("email");
-					System.out.println(rs.getString("password"));	
-					rowFound=true;
-			} 
+			boolean rowFound = false;
+
+			while (rs.next()) {
+				usr.id = rs.getInt("id");
+				usr.email = rs.getString("email");
+				System.out.println(rs.getString("password"));
+				rowFound = true;
+			}
 			if (!rowFound) {
 				return false;
 			} else {
 				return true;
 			}
-			} catch (SQLException e) {
-				System.out.println(e.getMessage());
-				return false;
-			} finally {
-				try {
-					if (conn != null) {
-						conn.close();
-					}
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			return false;
+		} finally {
+			try {
+				if (conn != null) {
+					conn.close();
 				}
+			} catch (SQLException ex) {
+				System.out.println(ex.getMessage());
+			}
 		}
-		
+
+	}
+
+	public static ArrayList<Tweet> getTweets(User usr) {
+
+		ArrayList<Tweet> timeline = new ArrayList<Tweet>();
+
+		//return the tweets of the logged-in user + tweets of those followed
+		String sql = "select b.username,content,ut.dt \n"
+				+ "from users a, following,tweets ,userTweets ut , users b  \n"
+				+ "where a.username=(?)'\n"
+				+ "and a.id=following.follower \n"
+				+ "and ut.userid=following.followed \n" + "and ut.userid=b.id\n"
+				+ "and tweets.id=ut.tweetid \n" + "UNION\n"
+				+ "select username,content,ut.dt \n"
+				+ "from users a,tweets ,userTweets ut  \n"
+				+ "where a.username=(?) and ut.userid=a.id\n"
+				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc;\n";
+
+		try (Connection conn = DriverManager.getConnection(url)) {
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, usr.username);
+			ResultSet rs = stmt.executeQuery(); {
+				while (rs.next()) {
+					Tweet a = new Tweet(rs.getString("username"),
+							rs.getString("content"), rs.getString("dt"));
+					timeline.add(a);
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return timeline;
+	}
+
+	public static ArrayList<Tweet> getTweets() {
+
+		ArrayList<Tweet> timeline = new ArrayList<Tweet>();
+
+		//return top 10 recent tweets for homepage
+		String sql = "select username,content,ut.dt \n"
+				+ "from users a,tweets ,userTweets ut  \n"
+				+ "where ut.userid=a.id\n"
+				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc limit 10;\n";
+
+		try (Connection conn = DriverManager.getConnection(url)) {
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			ResultSet rs = stmt.executeQuery(); {
+				while (rs.next()) {
+					Tweet a = new Tweet(rs.getString("username"),
+							rs.getString("content"), rs.getString("dt"));
+					timeline.add(a);
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return timeline;
 	}
 
 }

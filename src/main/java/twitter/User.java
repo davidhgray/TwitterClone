@@ -33,9 +33,13 @@ public class User {
 		this.password = password;
 	}
 
+	public User(String username) {
+		this.username = username;
+	}
+	
 	public void hashPassword() {
 		final String SALT = "ELIZABETHDAVID";
-		this.hashedPassword = this.password += SALT;
+		this.hashedPassword = this.password + SALT;
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("SHA");
@@ -46,5 +50,5 @@ public class User {
 		String digest = new String(md.digest());
 		this.hashedPassword=digest;
 	}
-
+  
 }

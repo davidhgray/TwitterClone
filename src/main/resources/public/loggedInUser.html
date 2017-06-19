@@ -7,45 +7,27 @@
 </head>
 <body>
   <header class="header">
-    <!-- <div class="container">
+    <div class="container">
       <ul class="navigation">
-        <li><a href="#" class="active">Home</a></li>
-        <li><a href="#">Sizzling</a></li>
+        <li><a href="#" class="active">LogOff</a></li>
         <li><a href="#">About</a></li>
+        <li><a href="#">User</a></li>
+        <li>
+          <form action="/logOff" method="post">
+          <button type="submit">logOff</button>
+        </form>
+        </li>
       </ul>
-    </div> -->
-  </header>
+    </div>
+</header>
 
 <div><h1> Fritter <h1> </div>
 
 <div class="userInMaster">
-  <div class="userIn">
-  <h3> New User? </h3>
-  <!-- <form action="/newUser" method="post"> -->
-      <input type="text" id="userName" name="UserName" placeholder="Enter Username Here">
-      <br>
-      <input type="password" id="password" name="Password" placeholder="Enter Password Here">
-      <br>
-      <input type="email" id="email" name="email" placeholder="Enter email here">
-      <br>
-      <input type="submit" id="createNew" value="Create New Account"/ >
-      <div id="new_msg">
-      </div>      <br>
-  <!-- </form> -->
-  <br>
 </div>
-<div class="userIn">
-<h3> Returning User? </h3>
-<div>
-<!-- <form action="/returnUser" method="post"> -->
-  <input type="text" name="returnUserName" id="returnUserName" placeholder="Enter Username Here">
-   <br>
-   <input type="password" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
-    <br>
-      <input type="submit" id="returnUser" value="Log In"/ >
-</div>
-<div id="ret_msg">
-</div>
+<br>
+<input type="text" id="usrContent" name="usrContent" placeholder="What's happening?">
+<input type="submit" id="tweet" value="submit tweet"/ >
 <br>
 </div>
 </div>
@@ -53,14 +35,14 @@
 <div class=outer>
 <div class=timeline>
 <br>
-<h3> What's Trending </h3>
 <br>
 {% for a in timeline %}
-<div class ="Sizzling">
+<div class ="userTimeline">
     <ul>
         <li>{{a.username}}</li>
         <li>{{a.content}}</li>
         <li>{{a.tweetDt}}</li>
+        <input type="retweet" id="retweet" value="retweet"/ >
     </ul>
 </div>
 {% endfor %}
@@ -68,7 +50,7 @@
 </div>
 
 <script>
-// script for creating new  user
+// script for submitting new tweet
 // AJAX posting x-www-form-urlencoded
 var returnButton = document.getElementById('createNew');
 returnButton.onclick = function () {

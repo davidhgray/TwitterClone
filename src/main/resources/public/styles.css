@@ -112,35 +112,21 @@ a.button {
 .header .navigation li a:hover {
   border-bottom: 2px solid #ac43ec;
 }
-
-/* MAIN ----------------------- */
-.main .primary {
-  float: left;
-  margin-right: 5%;
-  width: 60%;
+.outer {
+  display: table;
+  position:absolute;
+  height:100%;
+  width: 100%;
 }
-
-.main .secondary {
-  float: right;
-  margin-top: 100px;
-  width: 35%;
-}
-
-.main .Sizzling {
-  background: #ffffff;
+.timeline {
   border-left: 4px solid #ac43ec;
   border-radius: 0 4px 4px 0;
   margin: 40px 0;
   padding: 40px 28px 13px;
-  position: relative;
 }
-
-.main .keytar-review-inner {
-  overflow: auto;
-}
-
-.main .keytar-review .button {
-  float: right;
+.Sizzling {
+  background: #ffffff;
+  border-width: thin;
 }
 .main .customer-name {
   border-top: 1px dashed #e0d9cf;
@@ -180,11 +166,10 @@ a.button {
   position: relative;
   width: 50%;
 }
-
-  .header .navigation {
+.header .navigation {
     float: none;
     margin: 0 0 20px 0;
-  }
+}
 
   .header .navigation li {
     float: none;
