@@ -3,7 +3,7 @@
 <head>
   <title>Fritz Up?</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="/styles.css">
+  <!-- <link rel="stylesheet" type="text/css" href="/styles.css"> -->
 </head>
 <body>
   <header class="header">
@@ -23,13 +23,12 @@
 
 <div><h1> Fritter <h1> </div>
 
-<div class="userInMaster">
-</div>
+<div class="newTweet">
 <br>
-<input type="text" id="usrContent" name="usrContent" placeholder="What's happening?">
-<input type="submit" id="tweet" value="submit tweet"/ >
+<input type="text" id="newTweetContent" name="newTweet" placeholder="What's happening?">
 <br>
-</div>
+<input type="submit" id="newTweetSubmit" value="Go"/ >
+<br>
 </div>
 
 <div class=outer>
@@ -50,48 +49,25 @@
 </div>
 
 <script>
-// script for submitting new tweet
-// AJAX posting x-www-form-urlencoded
-var returnButton = document.getElementById('createNew');
-returnButton.onclick = function () {
-    var xhrReturn = new XMLHttpRequest();
-    xhrReturn.open('POST', '/newUser');
-    xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhrReturn.onload = function() {
-        if (xhrReturn.status === 200) {
-            var result = document.getElementById('new_msg');
-            result.innerHTML = xhrReturn.responseText;
-        } else if (xhrReturn.status !== 200) {
-            alert('Request failed.  Returned status of ' + xhrReturn.status);
+
+// submit new tweet
+var newTweetButton = document.getElementById('newTweetSubmit');
+newTweetButton.onclick = function () {
+    var xhrNewTweet = new XMLHttpRequest();
+    xhrNewTweet.open('POST', '/newTweet'); //change route to /newTweet
+    xhrNewTweet.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhrNewTweet.onload = function() {
+        if (xhrNewTweet.status === 200) {
+            var ntresult = document.getElementById('newTweetSubmit');
+            ntresult.innerHTML = xhrNewTweet.responseText;
+        } else if (xhrNewTweet.status !== 200) {
+            alert('Request failed.  Returned status of ' + xhrNewTweet.status);
         }
     };
-    var first = document.getElementById('userName').value;
-    var second = document.getElementById('password').value;
-    var third = document.getElementById('email').value;
-    var returnBody = 'userName=' + encodeURIComponent(first) + '&password=' + encodeURIComponent(second) + '&email=' + encodeURIComponent(third);
+    var newTweet = document.getElementById('newTweetContent').value;
+    var returnBody = 'newTweetContent=' + encodeURIComponent(newTweet) + '&returnUserName=david';
     console.log(returnBody);
-    xhrReturn.send(returnBody);
-};
-// script for logging in existing users
-// AJAX posting x-www-form-urlencoded
-var returnButton = document.getElementById('returnUser');
-returnButton.onclick = function () {
-    var xhrReturn = new XMLHttpRequest();
-    xhrReturn.open('POST', '/returnUser');
-    xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhrReturn.onload = function() {
-        if (xhrReturn.status === 200) {
-            var result = document.getElementById('ret_msg');
-            result.innerHTML = xhrReturn.responseText;
-        } else if (xhrReturn.status !== 200) {
-            alert('Request failed.  Returned status of ' + xhrReturn.status);
-        }
-    };
-    var first = document.getElementById('returnUserName').value;
-    var second = document.getElementById('returnUserPassword').value;
-    var returnBody = 'returnUserName=' + encodeURIComponent(first) + '&returnUserPassword=' + encodeURIComponent(second);
-    console.log(returnBody);
-    xhrReturn.send(returnBody);
+    xhrNewTweet.send(returnBody);
 };
 </script>
 </body>

@@ -148,11 +148,10 @@ public class FritterDB {
 
 		ArrayList<Tweet> timeline = new ArrayList<Tweet>();
 
-		//return the tweets of the logged-in user + tweets of those followed
+		// return the tweets of the logged-in user + tweets of those followed
 		String sql = "select b.username,content,ut.dt \n"
 				+ "from users a, following,tweets ,userTweets ut , users b  \n"
-				+ "where a.username=(?)'\n"
-				+ "and a.id=following.follower \n"
+				+ "where a.username=(?)'\n" + "and a.id=following.follower \n"
 				+ "and ut.userid=following.followed \n" + "and ut.userid=b.id\n"
 				+ "and tweets.id=ut.tweetid \n" + "UNION\n"
 				+ "select username,content,ut.dt \n"
@@ -161,10 +160,11 @@ public class FritterDB {
 				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc;\n";
 
 		try (Connection conn = DriverManager.getConnection(url)) {
-			
+
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, usr.username);
-			ResultSet rs = stmt.executeQuery(); {
+			ResultSet rs = stmt.executeQuery();
+			{
 				while (rs.next()) {
 					Tweet a = new Tweet(rs.getString("username"),
 							rs.getString("content"), rs.getString("dt"));
@@ -181,16 +181,17 @@ public class FritterDB {
 
 		ArrayList<Tweet> timeline = new ArrayList<Tweet>();
 
-		//return top 10 recent tweets for homepage
+		// return top 10 recent tweets for homepage
 		String sql = "select username,content,ut.dt \n"
 				+ "from users a,tweets ,userTweets ut  \n"
-				+ "where ut.userid=a.id\n"
-				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc limit 10;\n";
+				+ "where ut.userid=a.id\n" + "and tweets.id=ut.tweetid \n"
+				+ "order by ut.dt desc limit 10;\n";
 
 		try (Connection conn = DriverManager.getConnection(url)) {
-			
+
 			PreparedStatement stmt = conn.prepareStatement(sql);
-			ResultSet rs = stmt.executeQuery(); {
+			ResultSet rs = stmt.executeQuery();
+			{
 				while (rs.next()) {
 					Tweet a = new Tweet(rs.getString("username"),
 							rs.getString("content"), rs.getString("dt"));
@@ -201,6 +202,55 @@ public class FritterDB {
 			System.out.println(e.getMessage());
 		}
 		return timeline;
+	}
+
+	public static boolean insertTweet(User usr, String content) {
+		boolean tweetInserted = false;
+
+		String sql = "insert into tweets (content) values (?);";
+		try (Connection conn = DriverManager.getConnection(url);
+				PreparedStatement stmt = conn.prepareStatement(sql,
+						Statement.RETURN_GENERATED_KEYS);) {
+
+			stmt.setString(1, content);
+
+			int affectedRows = stmt.executeUpdate();
+
+			if (affectedRows == 0) {
+				System.out.println("Tweet failed to insert");
+				return tweetInserted;
+
+			}
+
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					long tweetId = generatedKeys.getLong(1);
+
+					sql = "insert into userTweets (tweetId, userId) values (?, ?);";
+					try (PreparedStatement stmt2 = conn.prepareStatement(sql,
+							Statement.RETURN_GENERATED_KEYS);) {
+						stmt2.setLong(1, tweetId);
+						stmt2.setLong(2, usr.id); //
+						affectedRows = stmt2.executeUpdate();
+						if (affectedRows == 0) {
+							System.out.println("Tweet failed to insert");
+							return tweetInserted;
+						}
+					} catch (SQLException e) {
+
+					}
+
+				} else {
+					System.out.println("Tweet failed to insert");
+					return tweetInserted;
+
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+     tweetInserted=true;
+     return tweetInserted;
 	}
 
 }

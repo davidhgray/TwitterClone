@@ -31,23 +31,42 @@ public class Twitter {
 			Session session = req.session();
 			String usrName = session.attribute("userName");
 			User usr = userSessions.get(usrName);
-//			if (usr.username != null) {
-//				System.out.println(usr.username);
-//			}
-//			if (usr.username == null){
-//				System.out.println("User " + usrName + " is not logged in.");
-//				res.redirect("/");
-//				return "Please login or create account.";
-//			}
-//			else {
-//				res.redirect("/loggedInUser");
-//			}
+			// if (usr.username != null) {
+			// System.out.println(usr.username);
+			// }
+			// if (usr.username == null){
+			// System.out.println("User " + usrName + " is not logged in.");
+			// res.redirect("/");
+			// return "Please login or create account.";
+			// }
+			// else {
+			// res.redirect("/loggedInUser");
+			// }
 			ArrayList<Tweet> timeline = FritterDB.getTweets();
 			JtwigTemplate template = JtwigTemplate
 					.classpathTemplate("public/twitter.html");
 			JtwigModel model = JtwigModel.newModel().with("timeline", timeline);
 			return template.render(model);
 
+		});
+
+		post("/newTweet", (req, res) -> {
+			System.out.println("/newTweet");
+			String usrnm = req.queryParams("returnUserName");
+
+
+			Session session = req.session();
+			String usrName = session.attribute("userName");
+			User usr = userSessions.get(usrName);
+
+			// long userId = req.session().attribute("userid");
+
+			String content = req.queryParams("newTweetContent");
+			boolean tweetInserted = FritterDB.insertTweet(usr, content);
+
+			System.out.println(content);
+			System.out.println("User content saved");
+			return usrnm + content;
 		});
 
 		post("/newUser", (req, res) -> {
@@ -75,6 +94,7 @@ public class Twitter {
 			boolean status = FritterDB.checkUser(usr);
 			if (!status) {
 				return "Invalid User, password combination";
+				
 			} else {
 
 				User user = userSessions.get(usr.username);
@@ -85,7 +105,6 @@ public class Twitter {
 				Session session = req.session();
 				session.attribute("userName", usr.username);
 
-				res.redirect("/loggedInUser");
 				return "Welcome back " + usr.username;
 			}
 
@@ -122,18 +141,8 @@ public class Twitter {
 			return "Logged off";
 
 		});
+
 		
-		post("/tweet", (req, res) -> {
-			// helper code
-			System.out.print("/tweet");
-			Session session = req.session();
-			session.invalidate();
-			res.redirect("/");
-			return "Logged off";
-
-		});
-
-
 	}
 
 }
