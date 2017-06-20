@@ -1,8 +1,12 @@
-- fix formatting of for loop on the twitter main page.
-- code for new user.
-- code for login user new page or same?
-- code for posting a tweet.
+- finish logic/html for logged-in users
+   - which includes timing of loading the logged in user page
+   + includes checking to make sure logged in user stays logged in until they log out.
+
+- add a 'Subscribe/Follow' button to allow logged in users to follow other users
+-Add a button to enable users need to be able to view their own feed and/or other peoples feeds (right now
+we are showing timeline)
 - On logged in users- page new html ?
-   Add links for users Tweets and Following and Followers
-- session handling across packages
-- SALT & encrypt password in service (SALT - add an extra string to users password before encrypting)
+- session handling across packages -- IN PROGRESS
+
+optional  - users can like the tweets of others
+optional -  users can retweet other tweets
