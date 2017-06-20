@@ -204,6 +204,34 @@ public class FritterDB {
 		return timeline;
 	}
 
+	public static ArrayList<Tweet> getFeed(String userName) {
+
+		ArrayList<Tweet> feed = new ArrayList<Tweet>();
+
+		// return the feed for the userName arg 
+		String sql = "select username,content,ut.dt \n"
+				+ "from users a,tweets ,userTweets ut  \n"
+				+ "where a.username=(?) and ut.userid=a.id\n"
+				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc;\n";
+
+		try (Connection conn = DriverManager.getConnection(url)) {
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, userName);
+			ResultSet rs = stmt.executeQuery();
+			{
+				while (rs.next()) {
+					Tweet a = new Tweet(rs.getString("username"),
+							rs.getString("content"), rs.getString("dt"));
+					feed.add(a);
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return feed;
+	}
+	
 	public static boolean insertTweet(User usr, String content) {
 		boolean tweetInserted = false;
 
