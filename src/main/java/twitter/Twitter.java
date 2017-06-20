@@ -1,3 +1,13 @@
+//requirements:
+//	user accounts, login, sessions
+//	a user can add tweets to their feed
+//	a user can subscribe to the feeds of other users
+//	a user can view feeds
+//	a user can view their timeline (a chronological aggregate of the feeds they follow)
+//OPTIONAL?
+//	a user can 'like' the tweets of other users
+//	a user can 'retweet': post tweets of other users into their own feed
+
 package twitter;
 
 import static spark.Spark.*;
@@ -31,31 +41,23 @@ public class Twitter {
 			Session session = req.session();
 			String usrName = session.attribute("userName");
 			User usr = userSessions.get(usrName);
-			// if (usr.username != null) {
-			// System.out.println(usr.username);
-			// }
-			// if (usr.username == null){
-			// System.out.println("User " + usrName + " is not logged in.");
-			// res.redirect("/");
-			// return "Please login or create account.";
-			// }
-			// else {
-			// res.redirect("/loggedInUser");
-			// }
-			ArrayList<Tweet> timeline = FritterDB.getTweets();
-			JtwigTemplate template = JtwigTemplate
-					.classpathTemplate("public/twitter.html");
+			ArrayList<Tweet> timeline;
+			if (usr == null) {
+				timeline = FritterDB.getTweets();
+			} else {
+				timeline = FritterDB.getTweets(usr);
+			}
+			JtwigTemplate template = JtwigTemplate.classpathTemplate("public/twitter.html");
 			JtwigModel model = JtwigModel.newModel().with("timeline", timeline);
 			return template.render(model);
-
 		});
 
 		post("/newTweet", (req, res) -> {
 			System.out.println("/newTweet");
 			String usrnm = req.queryParams("returnUserName");
 
-
 			Session session = req.session();
+
 			String usrName = session.attribute("userName");
 			User usr = userSessions.get(usrName);
 
@@ -70,31 +72,28 @@ public class Twitter {
 		});
 
 		post("/newUser", (req, res) -> {
-			User usr = new User(req.queryParams("userName"),
-					req.queryParams("password"), req.queryParams("email"));
+			User usr = new User(req.queryParams("userName"), req.queryParams("password"), req.queryParams("email"));
 
 			int status = FritterDB.insertUser(usr);
 			if (status == -2) {
 				return "Sorry, username " + usr.username + " already exists.";
 			} else {
-				return "We created your login " + usr.username
-						+ ".  Please login.";
+				return "We created your login " + usr.username + ".  Please login.";
 			}
 		});
-
+		// for authentication
 		post("/returnUser", (req, res) -> {
 			// helper code
 			System.out.println(req.queryParams("returnUserName"));
 			System.out.println(req.queryParams("returnUserPassword"));
 			// real code starts here
 
-			User usr = new User(req.queryParams("returnUserName"),
-					req.queryParams("returnUserPassword"));
+			User usr = new User(req.queryParams("returnUserName"), req.queryParams("returnUserPassword"));
 
 			boolean status = FritterDB.checkUser(usr);
 			if (!status) {
 				return "Invalid User, password combination";
-				
+
 			} else {
 
 				User user = userSessions.get(usr.username);
@@ -104,12 +103,17 @@ public class Twitter {
 
 				Session session = req.session();
 				session.attribute("userName", usr.username);
-
-				return "Welcome back " + usr.username;
+				ArrayList<Tweet> timeline = FritterDB.getTweets(usr);
+				JtwigTemplate template = JtwigTemplate.classpathTemplate("public/twitter.html");
+				JtwigModel model = JtwigModel.newModel().with("timeline", timeline);
+				return template.render(model);
+//				return "Welcome back " + usr.username;
 			}
 
 		});
 
+		// for loading the logged-in user page, but not currently getting
+		// invoked
 		get("/loggedInUser", (req, res) -> {
 			// helper code
 			System.out.print("/loggedInUser");
@@ -123,10 +127,8 @@ public class Twitter {
 				return "Please login.";
 			} else {
 				ArrayList<Tweet> timeline = FritterDB.getTweets();
-				JtwigTemplate template = JtwigTemplate
-						.classpathTemplate("public/loggedInUser.html");
-				JtwigModel model = JtwigModel.newModel().with("timeline",
-						timeline);
+				JtwigTemplate template = JtwigTemplate.classpathTemplate("public/loggedInUser.html");
+				JtwigModel model = JtwigModel.newModel().with("timeline", timeline);
 				return template.render(model);
 
 			}
@@ -142,7 +144,6 @@ public class Twitter {
 
 		});
 
-		
 	}
 
 }
