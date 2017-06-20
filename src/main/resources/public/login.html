@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fritz Up?</title>
+  <!-- <link rel="stylesheet" type="text/css" href="/styles.css"> -->
+</head>
+<body>
+
+<div><h1> Fritter Log In <h1> </div>
+
+<div class="userInMaster">
+
+<div class="userIn">
+<h3> Returning User? </h3>
+<div>
+<!-- <form action="/returnUser" method="post"> -->
+  <input type="text" name="returnUserName" id="returnUserName" placeholder="Enter Username Here">
+   <br>
+   <input type="password" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
+    <br>
+      <input type="submit" id="returnUser" value="Log In"/ >
+</div>
+<!-- <div id="ret_msg">
+</div> -->
+<br>
+</div>
+</div>
+
+<script>
+var returnButton = document.getElementById('returnUser');
+returnButton.onclick = function() {
+  var xhrReturn = new XMLHttpRequest();
+  xhrReturn.open('POST', '/returnUser');
+  xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhrReturn.onload = function() {
+    if (xhrReturn.status === 200) {
+      if (xhrReturn.responseText === 'logged in') {
+        window.location = '/';
+      }
+    } else {
+      alert('Request failed.  Returned status of ' + xhrReturn.status);
+    }
+  };
+  var first = document.getElementById('returnUserName').value;
+  var second = document.getElementById('returnUserPassword').value;
+  var returnBody = 'returnUserName=' + encodeURIComponent(first) + '&returnUserPassword=' + encodeURIComponent(second);
+  console.log(returnBody);
+  xhrReturn.send(returnBody);
+};
+</script>
+</body>
+</html>

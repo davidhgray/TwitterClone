@@ -18,23 +18,8 @@
 
 <div><h1> Fritter <h1> </div>
 
-<div class="userInMaster">
 
-<div class="userIn">
-<h3> Returning User? </h3>
-<div>
-<!-- <form action="/returnUser" method="post"> -->
-  <input type="text" name="returnUserName" id="returnUserName" placeholder="Enter Username Here">
-   <br>
-   <input type="password" name="returnUserPassword" id="returnUserPassword" placeholder="Enter Password Here">
-    <br>
-      <input type="submit" id="returnUser" value="Log In"/ >
-</div>
-<!-- <div id="ret_msg">
-</div> -->
-<br>
-</div>
-</div>
+<a href="/logOff"><button>Log off</button></a>
 <div class="newTweet">
 <br>
 <input type="text" id="newTweetContent" name="newTweet" placeholder="What's happening?">
@@ -43,20 +28,12 @@
 <br>
 </div>
 
+
+
+
 <div class=outer>
-<div class=timeline>
-<br>
-<h3> What's Trending </h3>
-<br>
-{% for a in timeline %}
-<div class ="Sizzling">
-    <ul>
-        <li>{{a.username}}</li>
-        <li>{{a.content}}</li>
-        <li>{{a.tweetDt}}</li>
-    </ul>
-</div>
-{% endfor %}
+<div class=timeline id="timeline">
+
 </div>
 </div>
 

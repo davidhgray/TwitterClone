@@ -151,7 +151,7 @@ public class FritterDB {
 		// return the tweets of the logged-in user + tweets of those followed
 		String sql = "select b.username,content,ut.dt \n"
 				+ "from users a, following,tweets ,userTweets ut , users b  \n"
-				+ "where a.username=(?)'\n" + "and a.id=following.follower \n"
+				+ "where a.username=(?) \n" + "and a.id=following.follower \n"
 				+ "and ut.userid=following.followed \n" + "and ut.userid=b.id\n"
 				+ "and tweets.id=ut.tweetid \n" + "UNION\n"
 				+ "select username,content,ut.dt \n"
@@ -233,6 +233,9 @@ public class FritterDB {
 	}
 	
 	public static boolean insertTweet(User usr, String content) {
+		
+		//TODO - Add transaction handling - con.setAutoCommit(false); con.commit();
+
 		boolean tweetInserted = false;
 
 		String sql = "insert into tweets (content) values (?);";
@@ -265,7 +268,7 @@ public class FritterDB {
 							return tweetInserted;
 						}
 					} catch (SQLException e) {
-
+						throw new RuntimeException(e);
 					}
 
 				} else {
