@@ -76,7 +76,7 @@ public class FritterDB {
 			ResultSet rs = stmt.executeQuery();
 			int cnt = rs.getInt("cnt");
 			if (cnt > 0) {
-				return -2;
+				return -2;// should never happen
 			} else { // insert new user
 				sql = "insert into Users (username,password, email) values(?,?,?)";
 				stmt = conn.prepareStatement(sql);
@@ -163,6 +163,7 @@ public class FritterDB {
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, usr.username);
+			stmt.setString(2, usr.username);
 			ResultSet rs = stmt.executeQuery();
 			{
 				while (rs.next()) {
@@ -175,6 +176,40 @@ public class FritterDB {
 			System.out.println(e.getMessage());
 		}
 		return timeline;
+	}
+
+	public static ArrayList<Tweet> getPopular(User usr) {
+
+		ArrayList<Tweet> popularTweets = new ArrayList<Tweet>();
+
+		// return top 20 tweets of everyone EXCEPT the current user
+
+		// select u.username,content,ut.dt
+		// from tweets t ,userTweets ut , users u
+		// where t.id=ut.tweetid and ut.userid=u.id and ut.userid not in(select
+		// id from users where username='brandy')
+
+		String sql = "select u.username,content,ut.dt \n"
+				+ "from tweets t ,userTweets ut , users u  \n"
+				+ "where t.id=ut.tweetid and ut.userid=u.id and ut.userid not in \n"
+				+ "(select id from users where username=?) order by ut.dt desc;";
+
+		try (Connection conn = DriverManager.getConnection(url)) {
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, usr.username);
+			ResultSet rs = stmt.executeQuery();
+			{
+				while (rs.next()) {
+					Tweet a = new Tweet(rs.getString("username"),
+							rs.getString("content"), rs.getString("dt"));
+					popularTweets.add(a);
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return popularTweets;
 	}
 
 	public static ArrayList<Tweet> getTweets() {
@@ -208,7 +243,7 @@ public class FritterDB {
 
 		ArrayList<Tweet> feed = new ArrayList<Tweet>();
 
-		// return the feed for the userName arg 
+		// return the feed for the userName arg
 		String sql = "select username,content,ut.dt \n"
 				+ "from users a,tweets ,userTweets ut  \n"
 				+ "where a.username=(?) and ut.userid=a.id\n"
@@ -231,10 +266,11 @@ public class FritterDB {
 		}
 		return feed;
 	}
-	
+
 	public static boolean insertTweet(User usr, String content) {
-		
-		//TODO - Add transaction handling - con.setAutoCommit(false); con.commit();
+
+		// TODO - Add transaction handling - con.setAutoCommit(false);
+		// con.commit();
 
 		boolean tweetInserted = false;
 
@@ -280,8 +316,54 @@ public class FritterDB {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-     tweetInserted=true;
-     return tweetInserted;
+		tweetInserted = true;
+		return tweetInserted;
 	}
 
+	public static boolean insertFollowing(User usr, int followed) {
+
+		// TODO - Add transaction handling - con.setAutoCommit(false);
+		// con.commit();
+
+		boolean followingInserted = false;
+
+		String sql = "insert into following (follower,followed) values (?,?);";
+
+		try (Connection conn = DriverManager.getConnection(url);
+				PreparedStatement stmt = conn.prepareStatement(sql);) {
+
+			stmt.setInt(1, usr.id);
+			stmt.setInt(2, followed);
+
+			int affectedRows = stmt.executeUpdate();
+
+			if (affectedRows == 0) {
+				System.out.println("Following row failed to insert");
+				return followingInserted;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		followingInserted = true;
+		return followingInserted;
+	}
+
+	public static int getUserIdByName(String usernm) {
+
+		String sql = "select id from users where username = ?";
+		int id = 0;
+		try (Connection conn = DriverManager.getConnection(url);
+				PreparedStatement stmt = conn.prepareStatement(sql);) {
+			stmt.setString(1, usernm);
+			ResultSet rs = stmt.executeQuery();
+			{
+				while (rs.next()) {
+					id = rs.getInt("id");
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return id;
+	}
 }

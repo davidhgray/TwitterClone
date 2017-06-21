@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Popular Fritters</title>
+  <!-- <link rel="stylesheet" type="text/css" href="/styles.css"> -->
+</head>
+<body>
+
+<div><h1> Fritter <h1> </div>
+
+{% if not username == null %}
+
+    <li>{{username}}, these are popular Fritters </li>
+
+{% endif %}
+
+<a href="/"><button>Return</button></a>
+
+
+  {% for a in timeline %}
+<div class=timeline id="timeline">
+      <ul>
+          <li>{{a.username}}</li>
+          <li>{{a.content}}</li>
+          <li>{{a.tweetDt}}</li>
+          <a href="/follow"><button>follow</button></a>
+      </ul>
+  </div>
+  {% endfor %}
+</div>
+</div>
+
+
+</body>
+</html>

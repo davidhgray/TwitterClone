@@ -53,33 +53,6 @@ getTimeline();
 setInterval(getTimeline, 10000);
 
 
-
-// script for creating new  user
-// AJAX posting x-www-form-urlencoded
-// var createNew = document.getElementById('createNew');
-// createNew.addEventListener('click', function () {
-//     ajaxPost(
-//         '/api/newUser',
-//         {
-//             userName: document.getElementById('userName').value,
-//             password: document.getElementById('password').value,
-//             email: document.getElementById('email').value
-//         },
-//         (responseText) => {
-//             document.getElementById('new_msg').innerHTML = responseText;
-//         },
-//         (status) => {
-//             // TODO show user the error
-//             console.log('Request failed.  Returned status of ' + status);
-//         }
-//     );
-// });
-
-// script for logging in existing users
-// AJAX posting x-www-form-urlencoded
-
-
-
 // submit new tweet
 var newTweetButton = document.getElementById('newTweetSubmit');
 newTweetButton.onclick = function() {
@@ -97,4 +70,17 @@ newTweetButton.onclick = function() {
   var returnBody = 'newTweetContent=' + encodeURIComponent(newTweet);
   console.log(returnBody);
   xhrNewTweet.send(returnBody);
+};
+// see list of popular tweets
+var popularButton = document.getElementById('popular');
+popularButton.onclick = function(evt) {
+  var xhrReturn = new XMLHttpRequest();
+  xhrReturn.open('GET', '/popular');
+  xhrReturn.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  if (xhrNewTweet.status === 200) {
+    getPopular();
+  } else if (xhrNewTweet.status !== 200) {
+    alert('Request failed.  Returned status of ' + xhrNewTweet.status);
+  }
+  xhrReturn.send();
 };

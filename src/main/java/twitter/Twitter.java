@@ -120,9 +120,49 @@ public class Twitter {
 				return "logged in";
 			}
 		});
+		
+		get("/popular", (req, res) -> {
+			System.out.print("/popular");
+			User user = req.session().attribute("user");
+			if (user == null) {
+				res.status(400);
+				return "";
+			}
+			ArrayList<Tweet> timeline ;
+			JtwigTemplate template = JtwigTemplate
+					.classpathTemplate("public/popular.html");
+			JtwigModel model = JtwigModel.newModel();
 
+			timeline = FritterDB.getPopular(user);
+			model.with("username", user.username);
+			model.with("timeline", timeline);
+
+			return template.render(model);
+			
+
+		});
+		
+		get("/follow", (req, res) -> {
+			System.out.print("/follow");
+			User user = req.session().attribute("user");
+			if (user == null) {
+				res.status(400);
+				return "";
+			}
+			String followedUserNm = req.queryParams("followedUserNm");
+			int followed = FritterDB.getUserIdByName(followedUserNm);
+			boolean followingInserted = FritterDB.insertFollowing(user, followed);
+			if (!followingInserted) {
+				res.status(400);
+				return "";
+			}
+			System.out.println(followed);
+			System.out.println("User " + user.username + " now following " + followed);
+			return user.username + " " + followed;
+
+		});
+		
 		get("/logOff", (req, res) -> {
-			// helper code
 			System.out.print("/logOff");
 			Session session = req.session();
 			session.invalidate();
@@ -131,6 +171,7 @@ public class Twitter {
 
 		});
 
+		
 	}
 
 }

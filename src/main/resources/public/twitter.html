@@ -18,8 +18,14 @@
 
 <div><h1> Fritter <h1> </div>
 
+{% if not username == null %}
+
+    <li>Welcome {{username}}</li>
+
+{% endif %}
 
 <a href="/logOff"><button>Log off</button></a>
+<a href="/popular" id=popular><button>Popular</button></a>
 <div class="newTweet">
 <br>
 <input type="text" id="newTweetContent" name="newTweet" placeholder="What's happening?">
@@ -27,9 +33,6 @@
 <input type="submit" id="newTweetSubmit" value="Go"/ >
 <br>
 </div>
-
-
-
 
 <div class=outer>
 <div class=timeline id="timeline">
