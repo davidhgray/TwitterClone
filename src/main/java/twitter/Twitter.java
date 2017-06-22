@@ -56,6 +56,7 @@ public class Twitter {
 		});
 
 		get("/logIn", (req, res) -> {
+			
 			JtwigTemplate template = JtwigTemplate
 					.classpathTemplate("public/login.html");
 			JtwigModel model = JtwigModel.newModel();
@@ -73,25 +74,48 @@ public class Twitter {
 			return gson.toJson(timeline);
 		});
 		
-//		IN PROGRESS get users feed--their own tweets
-		get("/api/feed", (req, res) -> {
-			User user = req.session().attribute("user");
-			if (user == null) {
-				res.status(400);
-				return "";
-			}
-			
+		//show user feeds
+		get("/user/:username", (req, res) -> {
+			String userName = req.params(":username");
+			// get user's feed from db
+			// render feed template
 			ArrayList<Tweet> timeline ;
 			JtwigTemplate template = JtwigTemplate
-					.classpathTemplate("public/twitter.html");
+					.classpathTemplate("public/feed.html");
 			JtwigModel model = JtwigModel.newModel();
 
-			timeline = FritterDB.getFeed(user);
-			model.with("username", user.username);
-			model.with("timeline", timeline);
+			timeline = FritterDB.getFeed(userName);
+			model.with("username", userName);
+			model.with("feed", timeline);
 
 			return template.render(model);
+	
 		});
+		
+//		IN PROGRESS get users feed--their own tweets
+//		get("/api/feed", (req, res) -> {
+//			User user = req.session().attribute("user");
+//			String userIdFeed = req.queryParams("userName");
+//			System.out.println("this is userId of Feed we want to show in req " + userIdFeed);
+//			Integer userId = Integer.parseInt(userIdFeed);
+//			
+//
+//			if (user == null) {
+//				res.status(400);
+//				return "";
+//			}
+//			
+//			ArrayList<Tweet> timeline ;
+//			JtwigTemplate template = JtwigTemplate
+//					.classpathTemplate("public/feed.html");
+//			JtwigModel model = JtwigModel.newModel();
+//
+//			timeline = FritterDB.getFeed(user);
+//			model.with("username", user.username);
+//			model.with("feed", timeline);
+//
+//			return template.render(model);
+//		});
 
 		post("/api/newTweet", (req, res) -> {
 			User user = req.session().attribute("user");
@@ -134,6 +158,8 @@ public class Twitter {
 				return "Invalid User, password combination";
 
 			} else {
+//				String sessionId = req.cookie("JSESSIONID");
+//				res.cookie("JSESSIONID", sessionId, 3600);
 				req.session().attribute("user", usr);
 				return "logged in";
 			}
@@ -167,8 +193,9 @@ public class Twitter {
 				res.status(400);
 				return "";
 			}
-			String followedUserNm = req.queryParams("followedUserNm");
-			int followed = FritterDB.getUserIdByName(followedUserNm);
+			String followedUser = req.queryParams("followedUser");
+			System.out.println("this is followedUser in req " + followedUser);
+			Integer followed = Integer.parseInt(followedUser);
 			boolean followingInserted = FritterDB.insertFollowing(user, followed);
 			if (!followingInserted) {
 				res.status(400);

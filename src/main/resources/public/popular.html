@@ -16,27 +16,29 @@
 
 <a href="/"><button>Return</button></a>
 
-
-  {% for a in timeline %}
 <div class=timeline id="timeline">
-      <ul>
-          <li followusr={{a.id}}>{{a.username}}</li>
-          <a href="/follow" followButton="follow"><button>follow</button></a>
-      </ul>
-  </div>
+    <ul>
+  {% for a in timeline %}
+          <li followedUser={{a.id}}>{{a.username}}</li>
+          <li id="{{a.id}}"><button followButton="{{a.id}}">follow</button></li>
   {% endfor %}
+      </ul>
+</div>
+
 </div>
 </div>
 
 <script type="text/javascript">
-var divItems = document.getElementById("timeline");
-
-divItems.addEventListener('click',function(evt){
-            alert(event.target.getAttribute("followusr"));
-    });
 // script for follow button
-var followButton = document.getElementById('follow');
-followButton.onclick = function(evt) {
+var divItems = document.getElementById("timeline");
+var followedUser;
+divItems.addEventListener('click',function(evt){
+    followedUser = event.target.getAttribute("followButton");
+
+            // alert(event.target.getAttribute("followButton"));
+    });
+
+divItems.onclick = function(evt) {
   var xhrFollow = new XMLHttpRequest();
   console.log("i am here");
   xhrFollow.open('POST', '/follow');
@@ -46,9 +48,9 @@ followButton.onclick = function(evt) {
         alert('Request failed.  Returned status of ' + xhrFollow.status);
     }
     };
-    var followusr = document.getElementById('followusr').value;
-    console.log(followusr);
-    var returnBody = 'followedUserNm=' + encodeURIComponent(followusr);
+    // var followusr = document.getElementById('followusr').value;
+    console.log(followedUser);
+    var returnBody = 'followedUser=' + encodeURIComponent(followedUser);
     console.log(returnBody);
         xhrFollow.send(returnBody);
 
