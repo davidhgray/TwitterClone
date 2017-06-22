@@ -14,6 +14,11 @@ public class User {
 	String email;
 	String hashedPassword;
 
+	public User(String username, int id) {
+		this.id=id;
+		this.username = username;
+		
+	}
 	public User(String username, String password, String email) {
 		int id;
 		this.username = username;

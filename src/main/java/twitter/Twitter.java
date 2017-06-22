@@ -72,6 +72,26 @@ public class Twitter {
 			Gson gson = new Gson();
 			return gson.toJson(timeline);
 		});
+		
+//		IN PROGRESS get users feed--their own tweets
+		get("/api/feed", (req, res) -> {
+			User user = req.session().attribute("user");
+			if (user == null) {
+				res.status(400);
+				return "";
+			}
+			
+			ArrayList<Tweet> timeline ;
+			JtwigTemplate template = JtwigTemplate
+					.classpathTemplate("public/twitter.html");
+			JtwigModel model = JtwigModel.newModel();
+
+			timeline = FritterDB.getFeed(user);
+			model.with("username", user.username);
+			model.with("timeline", timeline);
+
+			return template.render(model);
+		});
 
 		post("/api/newTweet", (req, res) -> {
 			User user = req.session().attribute("user");
@@ -98,8 +118,7 @@ public class Twitter {
 			if (status == -2) {
 				return "Sorry, username " + usr.username + " already exists.";
 			} else {
-				return "We created your login " + usr.username
-						+ ".  Please login.";
+				return "Login created";
 			}
 		});
 
@@ -127,21 +146,21 @@ public class Twitter {
 				res.status(400);
 				return "";
 			}
-			ArrayList<Tweet> timeline ;
+			ArrayList<User> userList ;
 			JtwigTemplate template = JtwigTemplate
 					.classpathTemplate("public/popular.html");
 			JtwigModel model = JtwigModel.newModel();
 
-			timeline = FritterDB.getPopular(user);
+			userList = FritterDB.getPopular(user);
 			model.with("username", user.username);
-			model.with("timeline", timeline);
+			model.with("timeline", userList);
 
 			return template.render(model);
 			
 
 		});
 		
-		get("/follow", (req, res) -> {
+		post("/follow", (req, res) -> {
 			System.out.print("/follow");
 			User user = req.session().attribute("user");
 			if (user == null) {

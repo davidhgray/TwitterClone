@@ -22,15 +22,17 @@ function ajaxPost(url, body, success, failure) {
 var createNew = document.getElementById('createNew');
 createNew.addEventListener('click', function () {
     ajaxPost(
-        '/newUser',
+        '/api/newUser',
         {
             userName: document.getElementById('userName').value,
             password: document.getElementById('password').value,
             email: document.getElementById('email').value
         },
         (responseText) => {
-            document.getElementById('new_msg').innerHTML = responseText;
-        },
+            if (responseText == "Login created") {
+                window.location.assign("/logIn");
+                } else (document.getElementById('new_msg').innerHTML == responseText);
+            },
         (status) => {
             // TODO show user the error
             console.log('Request failed.  Returned status of ' + status);

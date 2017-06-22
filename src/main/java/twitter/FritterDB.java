@@ -178,21 +178,26 @@ public class FritterDB {
 		return timeline;
 	}
 
-	public static ArrayList<Tweet> getPopular(User usr) {
+	public static ArrayList<User> getPopular(User usr) {
 
-		ArrayList<Tweet> popularTweets = new ArrayList<Tweet>();
+		ArrayList<User> popularUsers = new ArrayList<User>();
 
-		// return top 20 tweets of everyone EXCEPT the current user
+		// return active users - anyone who has tweeted EXCEPT the current user
 
-		// select u.username,content,ut.dt
-		// from tweets t ,userTweets ut , users u
-		// where t.id=ut.tweetid and ut.userid=u.id and ut.userid not in(select
-		// id from users where username='brandy')
-
-		String sql = "select u.username,content,ut.dt \n"
-				+ "from tweets t ,userTweets ut , users u  \n"
-				+ "where t.id=ut.tweetid and ut.userid=u.id and ut.userid not in \n"
-				+ "(select id from users where username=?) order by ut.dt desc;";
+	
+//		select u.id, u.username
+//		from users u 
+//		,	(select count(1) tweetCnt, ut.userid from tweets , userTweets ut
+//				where tweets.id=ut.tweetid group by ut.userid order by tweetCnt desc) maxtweets
+//		where u.id=maxtweets.userid
+//		and u.username <> "brandy"
+		
+		String sql = "select u.id, u.username \n"
+				+ "from users u  \n"
+				+ ",	(select count(1) tweetCnt, ut.userid from tweets , userTweets ut \n"
+				+ "where tweets.id=ut.tweetid group by ut.userid order by tweetCnt desc) maxtweets \n"
+				+ "where u.id=maxtweets.userid \n"
+				+ "and u.username <> ?";
 
 		try (Connection conn = DriverManager.getConnection(url)) {
 
@@ -201,15 +206,16 @@ public class FritterDB {
 			ResultSet rs = stmt.executeQuery();
 			{
 				while (rs.next()) {
-					Tweet a = new Tweet(rs.getString("username"),
-							rs.getString("content"), rs.getString("dt"));
-					popularTweets.add(a);
+					User u = new User(rs.getString("username"),
+							rs.getInt("id"));
+							
+					popularUsers.add(u);
 				}
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		return popularTweets;
+		return popularUsers;
 	}
 
 	public static ArrayList<Tweet> getTweets() {
@@ -239,7 +245,7 @@ public class FritterDB {
 		return timeline;
 	}
 
-	public static ArrayList<Tweet> getFeed(String userName) {
+	public static ArrayList<Tweet> getFeed(User user) {
 
 		ArrayList<Tweet> feed = new ArrayList<Tweet>();
 
@@ -252,7 +258,7 @@ public class FritterDB {
 		try (Connection conn = DriverManager.getConnection(url)) {
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setString(1, userName);
+			stmt.setString(1, user.username);
 			ResultSet rs = stmt.executeQuery();
 			{
 				while (rs.next()) {
