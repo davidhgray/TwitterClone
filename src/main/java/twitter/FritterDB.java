@@ -149,12 +149,12 @@ public class FritterDB {
 		ArrayList<Tweet> timeline = new ArrayList<Tweet>();
 
 		// return the tweets of the logged-in user + tweets of those followed
-		String sql = "select b.username,content,ut.dt \n"
+		String sql = "select b.id, b.username,content,ut.dt \n"
 				+ "from users a, following,tweets ,userTweets ut , users b  \n"
 				+ "where a.username=(?) \n" + "and a.id=following.follower \n"
 				+ "and ut.userid=following.followed \n" + "and ut.userid=b.id\n"
 				+ "and tweets.id=ut.tweetid \n" + "UNION\n"
-				+ "select username,content,ut.dt \n"
+				+ "select a.id, username,content,ut.dt \n"
 				+ "from users a,tweets ,userTweets ut  \n"
 				+ "where a.username=(?) and ut.userid=a.id\n"
 				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc;\n";

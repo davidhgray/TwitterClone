@@ -24,6 +24,13 @@ public class Tweet {
       
    	}
     
+    public Tweet(int id, String username, String content, String tweetDt) {
+	 this.user_id = id;
+	 this.username = username;
+     this.content=content;
+     this.tweetDt=tweetDt;
+	}
+    
 	
 	
 }

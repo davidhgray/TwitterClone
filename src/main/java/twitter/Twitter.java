@@ -84,12 +84,12 @@ public class Twitter {
 			
 			ArrayList<Tweet> timeline ;
 			JtwigTemplate template = JtwigTemplate
-					.classpathTemplate("public/twitter.html");
+					.classpathTemplate("public/feed.html");
 			JtwigModel model = JtwigModel.newModel();
 
 			timeline = FritterDB.getFeed(user);
 			model.with("username", user.username);
-			model.with("timeline", timeline);
+			model.with("feed", timeline);
 
 			return template.render(model);
 		});
@@ -168,8 +168,9 @@ public class Twitter {
 				res.status(400);
 				return "";
 			}
-			String followedUserNm = req.queryParams("followedUserNm");
-			int followed = FritterDB.getUserIdByName(followedUserNm);
+			String followedUser = req.queryParams("followedUser");
+			System.out.println("this is followedUser in req " + followedUser);
+			Integer followed = Integer.parseInt(followedUser);
 			boolean followingInserted = FritterDB.insertFollowing(user, followed);
 			if (!followingInserted) {
 				res.status(400);

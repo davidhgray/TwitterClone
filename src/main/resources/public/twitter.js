@@ -17,7 +17,6 @@ function ajaxPost(url, body, success, failure) {
   xhr.send(s);
 }
 
-
 function getTimeline() {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/api/timeline');
@@ -32,12 +31,15 @@ function getTimeline() {
         div.setAttribute('class', 'Sizzling');
         var ul = document.createElement('ul');
         var username = document.createElement('li');
+        var viewFeed = document.createElement('li');
         var content = document.createElement('li');
         var tweetDt = document.createElement('li');
         username.innerHTML = tweet.username;
+        viewFeed.innerHTML = "<button id=" + tweet.id + ">Feed</button>";
         content.innerHTML = tweet.content;
         tweetDt.innerHTML = tweet.tweetDt;
         ul.appendChild(username);
+        ul.appendChild(viewFeed);
         ul.appendChild(content);
         ul.appendChild(tweetDt);
         div.appendChild(ul);
@@ -103,33 +105,29 @@ feedButton.onclick = function(evt) {
   xhrFeed.send();
 };
 
-//get users own tweets, called by feed button click
-function getFeed() {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/api/feed');
-  xhr.onload = function(evt) {
-    if (xhr.status === 200) {
-      var response = JSON.parse(xhr.responseText);
-      var timelineDiv = document.getElementById('timeline');
-      timelineDiv.innerHTML = '';
-      for (var i in response) {
-        var tweet = response[i];
-        var div = document.createElement('div');
-        div.setAttribute('class', 'Sizzling');
-        var ul = document.createElement('ul');
-        var username = document.createElement('li');
-        var content = document.createElement('li');
-        var tweetDt = document.createElement('li');
-        username.innerHTML = tweet.username;
-        content.innerHTML = tweet.content;
-        tweetDt.innerHTML = tweet.tweetDt;
-        ul.appendChild(username);
-        ul.appendChild(content);
-        ul.appendChild(tweetDt);
-        div.appendChild(ul);
-        timelineDiv.appendChild(div);
-      }
+// view other user's feed
+var divItems = document.getElementById("timeline");
+var followedUser;
+divItems.addEventListener('click',function(evt){
+    followedUser = event.target.getAttribute("followButton");
+
+            // alert(event.target.getAttribute("followButton"));
+    });
+
+divItems.onclick = function(evt) {
+  var xhrFollow = new XMLHttpRequest();
+  console.log("i am here");
+  xhrFollow.open('POST', '/follow');
+  xhrFollow.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhrFollow.onload = function() {
+      if (xhrFollow.status !== 200) {
+        alert('Request failed.  Returned status of ' + xhrFollow.status);
     }
-  }
-  xhr.send();
-}
+    };
+    // var followusr = document.getElementById('followusr').value;
+    console.log(followedUser);
+    var returnBody = 'followedUser=' + encodeURIComponent(followedUser);
+    console.log(returnBody);
+        xhrFollow.send(returnBody);
+
+};
