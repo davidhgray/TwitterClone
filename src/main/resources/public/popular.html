@@ -34,8 +34,6 @@ var divItems = document.getElementById("timeline");
 var followedUser;
 divItems.addEventListener('click',function(evt){
     followedUser = event.target.getAttribute("followButton");
-
-            // alert(event.target.getAttribute("followButton"));
     });
 
 divItems.onclick = function(evt) {
@@ -48,7 +46,6 @@ divItems.onclick = function(evt) {
         alert('Request failed.  Returned status of ' + xhrFollow.status);
     }
     };
-    // var followusr = document.getElementById('followusr').value;
     console.log(followedUser);
     var returnBody = 'followedUser=' + encodeURIComponent(followedUser);
     console.log(returnBody);

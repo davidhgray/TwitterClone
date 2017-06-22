@@ -182,33 +182,35 @@ public class FritterDB {
 
 		ArrayList<User> popularUsers = new ArrayList<User>();
 
-		// return active users - anyone who has tweeted EXCEPT the current user
+		// return active users for the purpose of following
+		//- anyone who has tweeted EXCEPT the current user or anyone the current user is already following
 
-	
-//		select u.id, u.username
-//		from users u 
-//		,	(select count(1) tweetCnt, ut.userid from tweets , userTweets ut
-//				where tweets.id=ut.tweetid group by ut.userid order by tweetCnt desc) maxtweets
-//		where u.id=maxtweets.userid
-//		and u.username <> "brandy"
-		
-		String sql = "select u.id, u.username \n"
-				+ "from users u  \n"
-				+ ",	(select count(1) tweetCnt, ut.userid from tweets , userTweets ut \n"
-				+ "where tweets.id=ut.tweetid group by ut.userid order by tweetCnt desc) maxtweets \n"
-				+ "where u.id=maxtweets.userid \n"
-				+ "and u.username <> ?";
+
+		String sql = " select u.id, u.username"
+				+ " from users u \n"
+				+ " , (select count(1) tweetCnt, ut.userid from tweets , userTweets ut \n"
+				+ " where tweets.id=ut.tweetid group by ut.userid order by tweetCnt desc) maxtweets \n"
+				+ " where u.id=maxtweets.userid \n"
+				+ " and u.username <> ? \n"
+				+ " and u.id not in (select b.id \n"
+				+ "from users u \n"
+				+ ",following \n"
+				+ ",users b \n"
+				+ "where u.username =? \n"
+				+ "and u.id=following.follower \n"
+				+ "and b.id=following.followed);" ;
 
 		try (Connection conn = DriverManager.getConnection(url)) {
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, usr.username);
+			stmt.setString(2, usr.username);
 			ResultSet rs = stmt.executeQuery();
 			{
 				while (rs.next()) {
 					User u = new User(rs.getString("username"),
 							rs.getInt("id"));
-							
+
 					popularUsers.add(u);
 				}
 			}
@@ -275,24 +277,22 @@ public class FritterDB {
 
 	public static boolean insertTweet(User usr, String content) {
 
-		// TODO - Add transaction handling - con.setAutoCommit(false);
-		// con.commit();
-
 		boolean tweetInserted = false;
 
 		String sql = "insert into tweets (content) values (?);";
+
 		try (Connection conn = DriverManager.getConnection(url);
 				PreparedStatement stmt = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS);) {
-
+			conn.setAutoCommit(false);
 			stmt.setString(1, content);
 
 			int affectedRows = stmt.executeUpdate();
 
 			if (affectedRows == 0) {
+				conn.rollback();
 				System.out.println("Tweet failed to insert");
-				return tweetInserted;
-
+				return false;
 			}
 
 			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -306,30 +306,33 @@ public class FritterDB {
 						stmt2.setLong(2, usr.id); //
 						affectedRows = stmt2.executeUpdate();
 						if (affectedRows == 0) {
+							conn.rollback();
 							System.out.println("Tweet failed to insert");
-							return tweetInserted;
+							return false;
 						}
 					} catch (SQLException e) {
+						conn.rollback();
 						throw new RuntimeException(e);
 					}
 
 				} else {
 					System.out.println("Tweet failed to insert");
-					return tweetInserted;
+					conn.rollback();
+					return false;
 
 				}
 			}
+			conn.commit();
+			tweetInserted = true;
+			return tweetInserted;
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			return false;
+
 		}
-		tweetInserted = true;
-		return tweetInserted;
+
 	}
 
 	public static boolean insertFollowing(User usr, int followed) {
-
-		// TODO - Add transaction handling - con.setAutoCommit(false);
-		// con.commit();
 
 		boolean followingInserted = false;
 
@@ -337,7 +340,7 @@ public class FritterDB {
 
 		try (Connection conn = DriverManager.getConnection(url);
 				PreparedStatement stmt = conn.prepareStatement(sql);) {
-
+			
 			stmt.setInt(1, usr.id);
 			stmt.setInt(2, followed);
 

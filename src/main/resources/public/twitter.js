@@ -90,19 +90,3 @@ popularButton.onclick = function(evt) {
   };
   xhrPopular.send();
 };
-
-// see users own feed of tweets on button click
-// var feedButton = document.getElementById('feed');
-// feedButton.onclick = function(evt) {
-//   var xhrFeed = new XMLHttpRequest();
-//   xhrFeed.open('GET', '/api/feed');
-//   xhrFeed.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//   xhrFeed.onload = function() {
-//     if (xhrFeed.status === 200) {
-//       getFeed();
-//     } else if (xhrFeed.status !== 200) {
-//       console.log('Request failed.  Returned status of ' + xhrFeed.status);
-//     }
-//   };
-//   xhrFeed.send();
-// };
