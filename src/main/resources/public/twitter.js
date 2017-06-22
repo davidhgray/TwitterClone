@@ -75,7 +75,7 @@ newTweetButton.onclick = function() {
   console.log(returnBody);
   xhrNewTweet.send(returnBody);
 };
-// see list of popular tweets
+// see list of popular tweeters
 var popularButton = document.getElementById('popular');
 popularButton.onclick = function(evt) {
   var xhrPopular = new XMLHttpRequest();
@@ -92,38 +92,17 @@ popularButton.onclick = function(evt) {
 };
 
 // see users own feed of tweets on button click
-var feedButton = document.getElementById('feed');
-feedButton.onclick = function(evt) {
-  var xhrFeed = new XMLHttpRequest();
-  xhrFeed.open('GET', '/api/feed');
-  xhrFeed.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhrFeed.onload = function() {
-    if (xhrFeed.status === 200) {
-      getFeed();
-    } else if (xhrFeed.status !== 200) {
-      console.log('Request failed.  Returned status of ' + xhrFeed.status);
-    }
-  };
-  xhrFeed.send();
-};
-
-// xhrFeed.send(); // console.log(event.target.getAttribute("followButton"));
-// });
-
-// divItems.onclick = function(evt) {
-//   var xhrFollow = new XMLHttpRequest();
-//   console.log("i am here");
-//   xhrFollow.open('POST', '/follow');
-//   xhrFollow.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//   xhrFollow.onload = function() {
-//     if (xhrFollow.status !== 200) {
-//       console.log('Request failed.  Returned status of ' + xhrFollow.status);
+// var feedButton = document.getElementById('feed');
+// feedButton.onclick = function(evt) {
+//   var xhrFeed = new XMLHttpRequest();
+//   xhrFeed.open('GET', '/api/feed');
+//   xhrFeed.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//   xhrFeed.onload = function() {
+//     if (xhrFeed.status === 200) {
+//       getFeed();
+//     } else if (xhrFeed.status !== 200) {
+//       console.log('Request failed.  Returned status of ' + xhrFeed.status);
 //     }
 //   };
-//   // var followusr = document.getElementById('followusr').value;
-//   console.log(followedUser);
-//   var returnBody = 'followedUser=' + encodeURIComponent(followedUser);
-//   console.log(returnBody);
-//   xhrFollow.send(returnBody);
-//
+//   xhrFeed.send();
 // };
