@@ -426,7 +426,7 @@ public class FritterDB {
 
 		boolean likeInserted = false;
 
-		String sql = "insert into likedTweets (tweetId,tweetedUserId,likedUserId) values (?,?,?,?);";
+		String sql = "insert into likedTweets (tweetId,tweetedUserId,likedUserId) values (?,?,?);";
 
 		try (Connection conn = DriverManager.getConnection(url);
 				PreparedStatement stmt = conn.prepareStatement(sql);) {

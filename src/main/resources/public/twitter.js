@@ -46,7 +46,11 @@ function getTimeline() {
         retweetHref.setAttribute('href', "/retweet/" + tweet.ID);
         retweet.appendChild(retweetHref);
 
-
+        var like = document.createElement('li');
+        var likeHref = document.createElement('a');
+        likeHref.innerHTML = "Like";
+        likeHref.setAttribute('href', '/like/' + tweet.ID + "/" + tweet.user_id);
+        like.appendChild(likeHref);
 
         content.innerHTML = tweet.content;
         tweetDt.innerHTML = tweet.tweetDt;
@@ -54,6 +58,7 @@ function getTimeline() {
         ul.appendChild(content);
         ul.appendChild(tweetDt);
         ul.appendChild(retweet);
+        ul.appendChild(like);
         div.appendChild(ul);
         timelineDiv.appendChild(div);
       }

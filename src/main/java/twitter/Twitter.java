@@ -111,7 +111,6 @@ public class Twitter {
 			return user.username + " " + content;
 		});
 		
-//		copied from newTweet route
 		get("/retweet/:tweetId", (req, res) -> {
 			User user = req.session().attribute("user");
 			String tweetId = req.params(":tweetId");
@@ -130,6 +129,29 @@ public class Twitter {
 			res.redirect("/");
 			return "";
 		});
+		
+//		liked tweets
+		get("/like/:tweetId/:tweetAuthorId", (req, res) -> {
+			User user = req.session().attribute("user");
+			String tweetId = req.params(":tweetId");
+			Integer tweetIdInt = Integer.parseInt(tweetId);
+			String tweetAuthorId = req.params(":tweetAuthorId");
+			Integer tweetAuthor = Integer.parseInt(tweetAuthorId); //update this
+			if (user == null) {
+				res.status(400);
+				return "";
+			}
+			boolean likedUser = FritterDB.insertLike(user, tweetIdInt, tweetAuthor);
+			if (!likedUser) {
+				res.status(400);
+				return "";
+			}
+			System.out.println(user.username + " has liked tweetId " + tweetId + " from tweet author " + tweetAuthor);
+			System.out.println("Like successful");
+			res.redirect("/");
+			return "";
+		});
+
 
 		post("/api/newUser", (req, res) -> {
 			User usr = new User(req.queryParams("userName"),
