@@ -46,6 +46,8 @@ function getTimeline() {
         retweetHref.setAttribute('href', "/retweet/" + tweet.ID);
         retweet.appendChild(retweetHref);
 
+
+
         content.innerHTML = tweet.content;
         tweetDt.innerHTML = tweet.tweetDt;
         ul.appendChild(username);

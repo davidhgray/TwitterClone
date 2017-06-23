@@ -36,6 +36,13 @@ public class FritterDB {
 			+ "	followed integer NOT NULL, \n"
 			+ " FOREIGN KEY (follower) REFERENCES user(id) \n,"
 			+ " FOREIGN KEY (followed) REFERENCES user(id) \n" + ");";
+	
+	public static final String likedTweetsTblSQL = "CREATE TABLE likedTweets \n"
+			+ "(tweetId integer, tweetedUserId integer, likedUserId  integer, \n"
+			+ " `dt` text DEFAULT CURRENT_TIMESTAMP \n"
+			+ ",FOREIGN KEY(tweetId) REFERENCES userTweets(tweetid) \n"
+			+ ",FOREIGN KEY(tweetedUserId) REFERENCES usertweets(userid) \n"
+			+ "	,FOREIGN KEY(likedUserId) REFERENCES user(id);" ;
 
 	public static void createTables() {
 		Connection conn = null;
@@ -47,6 +54,7 @@ public class FritterDB {
 			stmt.execute(createTweetsTblSQL);
 			stmt.execute(userTweetsTblSQL);
 			stmt.execute(followingTblSQL);
+			stmt.execute(likedTweetsTblSQL);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		} finally {
