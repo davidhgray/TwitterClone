@@ -421,4 +421,51 @@ public class FritterDB {
 		}
 		return id;
 	}
+	
+	public static boolean insertLike(User usr, int tweetId, int tweetAuthor) {
+
+		boolean likeInserted = false;
+
+		String sql = "insert into likedTweets (tweetId,tweetedUserId,likedUserId) values (?,?,?,?);";
+
+		try (Connection conn = DriverManager.getConnection(url);
+				PreparedStatement stmt = conn.prepareStatement(sql);) {
+			
+			stmt.setInt(1, tweetId);
+			stmt.setInt(2, tweetAuthor);
+			stmt.setInt(3, usr.id);
+
+			int affectedRows = stmt.executeUpdate();
+
+			if (affectedRows == 0) {
+				System.out.println("Like row failed to insert");
+				return likeInserted;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		likeInserted = true;
+		return likeInserted;
+	}
+	
+	public static int getTweetLikes(int tweetId,int authorUserId) {
+
+		String sql = "select count(1) likes from likedTweets where tweetId = ? and authorUserId=tweetedUserId";
+		int likes = 0;
+		try (Connection conn = DriverManager.getConnection(url);
+				PreparedStatement stmt = conn.prepareStatement(sql);) {
+			stmt.setInt(1, tweetId);
+			stmt.setInt(2, authorUserId);
+			ResultSet rs = stmt.executeQuery();
+			{
+				while (rs.next()) {
+				  likes = rs.getInt("likes");
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return likes;
+	}
+	
 }
