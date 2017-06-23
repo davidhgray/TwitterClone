@@ -39,11 +39,19 @@ function getTimeline() {
 
         var content = document.createElement('li');
         var tweetDt = document.createElement('li');
+
+        var retweet = document.createElement('li');
+        var retweetHref = document.createElement('a');
+        retweetHref.innerHTML = "Retweet";
+        retweetHref.setAttribute('href', "/retweet/" + tweet.ID);
+        retweet.appendChild(retweetHref);
+
         content.innerHTML = tweet.content;
         tweetDt.innerHTML = tweet.tweetDt;
         ul.appendChild(username);
         ul.appendChild(content);
         ul.appendChild(tweetDt);
+        ul.appendChild(retweet);
         div.appendChild(ul);
         timelineDiv.appendChild(div);
       }

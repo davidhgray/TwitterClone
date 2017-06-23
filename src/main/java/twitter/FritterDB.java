@@ -149,12 +149,12 @@ public class FritterDB {
 		ArrayList<Tweet> timeline = new ArrayList<Tweet>();
 
 		// return the tweets of the logged-in user + tweets of those followed
-		String sql = "select b.id, b.username,content,ut.dt \n"
+		String sql = "select ut.tweetId, b.id, b.username,content,ut.dt \n"
 				+ "from users a, following,tweets ,userTweets ut , users b  \n"
 				+ "where a.username=(?) \n" + "and a.id=following.follower \n"
 				+ "and ut.userid=following.followed \n" + "and ut.userid=b.id\n"
 				+ "and tweets.id=ut.tweetid \n" + "UNION\n"
-				+ "select a.id, username,content,ut.dt \n"
+				+ "select ut.tweetId, a.id, username,content,ut.dt \n"
 				+ "from users a,tweets ,userTweets ut  \n"
 				+ "where a.username=(?) and ut.userid=a.id\n"
 				+ "and tweets.id=ut.tweetid \n" + "order by ut.dt desc;\n";
@@ -167,8 +167,11 @@ public class FritterDB {
 			ResultSet rs = stmt.executeQuery();
 			{
 				while (rs.next()) {
-					Tweet a = new Tweet(rs.getString("username"),
-							rs.getString("content"), rs.getString("dt"));
+					Tweet a = new Tweet(rs.getInt("tweetId"),
+							rs.getInt("id"),
+							rs.getString("username"),
+							rs.getString("content"), 
+							rs.getString("dt"));
 					timeline.add(a);
 				}
 			}
@@ -333,7 +336,7 @@ public class FritterDB {
 	}
 
 	
-	public static boolean reTweet(User usr, int tweetId) {
+	public static boolean reTweet(String username, int tweetId) {
 
 		boolean tweetInserted = false;
 		
@@ -351,7 +354,7 @@ public class FritterDB {
 				PreparedStatement stmt = conn.prepareStatement(sql);) {
 
 			stmt.setInt(1, tweetId);
-			stmt.setString(2, usr.username);
+			stmt.setString(2, username);
 			int affectedRows = stmt.executeUpdate();
 
 			if (affectedRows == 0) {

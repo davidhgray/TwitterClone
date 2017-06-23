@@ -21,6 +21,7 @@
   {% for a in timeline %}
           <li followedUser={{a.id}}>{{a.username}}</li>
           <li id="{{a.id}}"><button followButton="{{a.id}}">follow</button></li>
+          <br>
   {% endfor %}
       </ul>
 </div>

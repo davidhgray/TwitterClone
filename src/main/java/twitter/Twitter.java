@@ -92,30 +92,7 @@ public class Twitter {
 	
 		});
 		
-//		IN PROGRESS get users feed--their own tweets
-//		get("/api/feed", (req, res) -> {
-//			User user = req.session().attribute("user");
-//			String userIdFeed = req.queryParams("userName");
-//			System.out.println("this is userId of Feed we want to show in req " + userIdFeed);
-//			Integer userId = Integer.parseInt(userIdFeed);
-//			
-//
-//			if (user == null) {
-//				res.status(400);
-//				return "";
-//			}
-//			
-//			ArrayList<Tweet> timeline ;
-//			JtwigTemplate template = JtwigTemplate
-//					.classpathTemplate("public/feed.html");
-//			JtwigModel model = JtwigModel.newModel();
-//
-//			timeline = FritterDB.getFeed(user);
-//			model.with("username", user.username);
-//			model.with("feed", timeline);
-//
-//			return template.render(model);
-//		});
+
 
 		post("/api/newTweet", (req, res) -> {
 			User user = req.session().attribute("user");
@@ -132,6 +109,26 @@ public class Twitter {
 			System.out.println(content);
 			System.out.println("User content saved");
 			return user.username + " " + content;
+		});
+		
+//		copied from newTweet route
+		get("/retweet/:tweetId", (req, res) -> {
+			User user = req.session().attribute("user");
+			String tweetId = req.params(":tweetId");
+			Integer tweetIdInt = Integer.parseInt(tweetId);
+			if (user == null) {
+				res.status(400);
+				return "";
+			}
+			boolean retweetingUser = FritterDB.reTweet(user.username, tweetIdInt);
+			if (!retweetingUser) {
+				res.status(400);
+				return "";
+			}
+			System.out.println("tweetId is " + tweetId + " and retweeting user is " + user.username);
+			System.out.println("Retweet successful");
+			res.redirect("/");
+			return "";
 		});
 
 		post("/api/newUser", (req, res) -> {
