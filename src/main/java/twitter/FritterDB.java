@@ -24,7 +24,7 @@ public class FritterDB {
 			+ "	dt text DEFAULT CURRENT_TIMESTAMP);";
 
 	public static final String userTweetsTblSQL = "CREATE TABLE IF NOT EXISTS userTweets (\n"
-			+ "	tweetId integer PRIMARY KEY,\n" + " userId integer,\n"
+			+ "	tweetId integer ,\n" + " userId integer,\n"
 			+ " dt text DEFAULT CURRENT_TIMESTAMP,\n"
 			+ " originalUserId integer,\n"
 			+ " FOREIGN KEY (TweetId) REFERENCES tweets(id) \n,"
@@ -332,6 +332,41 @@ public class FritterDB {
 
 	}
 
+	
+	public static boolean reTweet(User usr, int tweetId) {
+
+		boolean tweetInserted = false;
+		
+		String sql = "Insert into usertweets \n"
+				+ "(tweetId,userId,dt,originalUserId) \n"
+				+ "select tweetid, a.id ,CURRENT_TIMESTAMP,ut.userid\n"
+				+ "from \n"
+				+ "usertweets ut \n"
+				+ ",users a \n" 
+				+ "where ut.tweetid=? \n"
+				+ "and originalUserId is null \n"
+				+ "and a.username =?";
+
+		try (Connection conn = DriverManager.getConnection(url);
+				PreparedStatement stmt = conn.prepareStatement(sql);) {
+
+			stmt.setInt(1, tweetId);
+			stmt.setString(2, usr.username);
+			int affectedRows = stmt.executeUpdate();
+
+			if (affectedRows == 0) {
+				System.out.println("Following row failed to insert");
+				return tweetInserted;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		tweetInserted = true;
+		return tweetInserted;
+	}
+
+	
+	
 	public static boolean insertFollowing(User usr, int followed) {
 
 		boolean followingInserted = false;
